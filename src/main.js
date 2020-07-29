@@ -2,12 +2,12 @@
 
 const TRIPS_COUNT = 3;
 
-const bodyElement = document.querySelector('.page-body');
+const bodyElement = document.querySelector(`.page-body`);
 
-const tripMainElement = bodyElement.querySelector('.trip-main');
-const tripMainControlsElement = tripMainElement.querySelector('.trip-main__trip-controls');
-const menuHeaderElement = tripMainControlsElement.querySelector('h2');
-const tripEventsElement = bodyElement.querySelector('.trip-events');
+const tripMainElement = bodyElement.querySelector(`.trip-main`);
+const tripMainControlsElement = tripMainElement.querySelector(`.trip-main__trip-controls`);
+const menuHeaderElement = tripMainControlsElement.querySelector(`h2`);
+const tripEventsElement = bodyElement.querySelector(`.trip-events`);
 
 const createMenuElement = () => (
   `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -314,29 +314,29 @@ const render = (container, node, place) => {
   container.insertAdjacentHTML(place, node);
 };
 
-render(tripMainElement, createTripInfoElement(), 'afterbegin'); // Отрисовка информации о поездке
+render(tripMainElement, createTripInfoElement(), `afterbegin`); // Отрисовка информации о поездке
 
-const tripMainInfoElement = tripMainElement.querySelector('.trip-main__trip-info');
+const tripMainInfoElement = tripMainElement.querySelector(`.trip-main__trip-info`);
 
-render(tripMainInfoElement, createTripCostElement(), 'beforeend'); // Отрисовка цены поездки
-render(menuHeaderElement, createMenuElement(), 'afterend'); // Отрисовка меню
-render(tripMainControlsElement, createFilterElement(), 'beforeend'); // Отрисовка фильтров
-render(tripEventsElement, createTripSortElement(), 'beforeend'); // Отрисовка сортировки
-render(tripEventsElement, createTripDaysElement(), 'beforeend'); // Отрисовка списка пунктов поездки
+render(tripMainInfoElement, createTripCostElement(), `beforeend`); // Отрисовка цены поездки
+render(menuHeaderElement, createMenuElement(), `afterend`); // Отрисовка меню
+render(tripMainControlsElement, createFilterElement(), `beforeend`); // Отрисовка фильтров
+render(tripEventsElement, createTripSortElement(), `beforeend`); // Отрисовка сортировки
+render(tripEventsElement, createTripDaysElement(), `beforeend`); // Отрисовка списка пунктов поездки
 
-const tripDaysElement = tripEventsElement.querySelector('.trip-days');
+const tripDaysElement = tripEventsElement.querySelector(`.trip-days`);
 
-render(tripDaysElement, createTripDaysItemElement(), 'beforeend'); // Отрисовка пункта поездки
+render(tripDaysElement, createTripDaysItemElement(), `beforeend`); // Отрисовка пункта поездки
 
-const tripDaysItemElement = tripDaysElement.querySelector('.trip-days__item');
+const tripDaysItemElement = tripDaysElement.querySelector(`.trip-days__item`);
 
-render(tripDaysItemElement, createDayInfoElement(), 'beforeend'); // Отрисовка информации о пункте поездки
-render(tripDaysItemElement, createTripEventsListElement(), 'beforeend'); // Отрисовка списка мест в пункте
+render(tripDaysItemElement, createDayInfoElement(), `beforeend`); // Отрисовка информации о пункте поездки
+render(tripDaysItemElement, createTripEventsListElement(), `beforeend`); // Отрисовка списка мест в пункте
 
-const tripEventsListElement = tripDaysItemElement.querySelector('.trip-events__list');
+const tripEventsListElement = tripDaysItemElement.querySelector(`.trip-events__list`);
 
-render(tripEventsListElement, createEventEditElement(), 'afterbegin'); // Отрисовка редактирования места
+render(tripEventsListElement, createEventEditElement(), `afterbegin`); // Отрисовка редактирования места
 
 for (let i = 0; i < TRIPS_COUNT; i++) {
-  render(tripEventsListElement, createTripEventsItemElement(), 'beforeend'); // Отрисовка места
+  render(tripEventsListElement, createTripEventsItemElement(), `beforeend`); // Отрисовка места
 }
