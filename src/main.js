@@ -5,8 +5,6 @@ import {createFilterElement} from './view/filter.js';
 import {createTripSortElement} from './view/trip-sort.js';
 import {createEventEditElement} from './view/event-edit.js';
 import {createTripDaysElement} from './view/trip-days.js';
-import {createTripDaysItemElement} from './view/trip-days-item.js';
-import {createTripEventsItemElement} from './view/trip-events-item.js';
 import {createTripItem} from './mock/trip.js';
 
 const TRIPS_COUNT = 15;
@@ -38,18 +36,8 @@ render(tripMainInfoElement, createTripCostElement(), `beforeend`); // Отрис
 render(menuHeaderElement, createMenuElement(), `afterend`); // Отрисовка меню
 render(tripMainControlsElement, createFilterElement(), `beforeend`); // Отрисовка фильтров
 render(tripEventsElement, createTripSortElement(), `beforeend`); // Отрисовка сортировки
-render(tripEventsElement, createTripDaysElement(), `beforeend`); // Отрисовка списка пунктов поездки
+render(tripEventsElement, createTripDaysElement(sortedByDateTrips.slice(1)), `beforeend`); // Отрисовка списка пунктов поездки
 
-const tripDaysElement = tripEventsElement.querySelector(`.trip-days`);
+const tripEventsListElement = tripEventsElement.querySelector(`.trip-events__list`);
 
-render(tripDaysElement, createTripDaysItemElement(), `beforeend`); // Отрисовка дня поездки
-
-const tripEventsListElement = tripDaysElement.querySelector(`.trip-events__list`);
-
-render(tripEventsListElement, createEventEditElement(trips[0]), `afterbegin`); // Отрисовка редактирования места
-
-for (let i = 1; i < TRIPS_COUNT; i++) {
-  render(tripEventsListElement, createTripEventsItemElement(sortedByDateTrips[i]), `beforeend`); // Отрисовка места
-}
-
-console.log(sortedByDateTrips);
+render(tripEventsListElement, createEventEditElement(sortedByDateTrips[0]), `afterbegin`); // Отрисовка редактирования места
