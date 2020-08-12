@@ -1,4 +1,5 @@
 import {getFormatEditTime, getFormatText} from '../utils.js';
+import {preposition} from '../const.js';
 
 const createOffer = (offer) => {
   const {title, price, isChecked} = offer;
@@ -17,7 +18,7 @@ const createPhoto = (photo) => `<img class="event__photo" src="${photo}" alt="Ev
 
 export const createEventEditElement = (trip) => {
   const {type, destination, description, startTime, endTime, price, offers, photos} = trip;
-  const preposition = (type === `Check-in` || type === `Sightseeing` || type === `Restaurant`) ? `in` : `to`;
+  const prep = preposition[type];
   const formattedStartTime = getFormatEditTime(startTime);
   const formattedEndTime = getFormatEditTime(endTime);
   const offersElement = offers.map((it) => createOffer(it)).join(``);
@@ -96,7 +97,7 @@ export const createEventEditElement = (trip) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${type} ${preposition}
+            ${type} ${prep}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
           <datalist id="destination-list-1">
