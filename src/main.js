@@ -9,7 +9,7 @@ import {createTripDaysItemElement} from './view/trip-days-item.js';
 import {createTripEventsItemElement} from './view/trip-events-item.js';
 import {createTrip} from './mock/mock.js';
 
-const TRIPS_COUNT = 15;
+const TRIPS_COUNT = 5;
 const trips = new Array(TRIPS_COUNT).fill().map(createTrip).sort((a, b) => a.startTime - b.startTime);
 const tripDays = [...new Set(trips.map((trip) => new Date(trip.startTime).toDateString()))];
 
@@ -23,11 +23,11 @@ const render = (container, node, place) => {
   container.insertAdjacentHTML(place, node);
 };
 
-render(tripMainElement, createTripInfoElement(), `afterbegin`); // Отрисовка информации о поездке
+render(tripMainElement, createTripInfoElement(trips), `afterbegin`); // Отрисовка информации о поездке
 
 const tripMainInfoElement = tripMainElement.querySelector(`.trip-main__trip-info`);
 
-render(tripMainInfoElement, createTripCostElement(), `beforeend`); // Отрисовка цены поездки
+render(tripMainInfoElement, createTripCostElement(trips), `beforeend`); // Отрисовка цены поездки
 render(menuHeaderElement, createMenuElement(), `afterend`); // Отрисовка меню
 render(tripMainControlsElement, createFilterElement(), `beforeend`); // Отрисовка фильтров
 render(tripEventsElement, createTripSortElement(), `beforeend`); // Отрисовка сортировки
