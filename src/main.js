@@ -3,10 +3,10 @@ import TripInfoView from './view/trip-info.js';
 import TripCostView from './view/trip-cost.js';
 import FilterView from './view/filter.js';
 import SortView from './view/trip-sort.js';
+import DaysListView from './view/trip-days.js';
+import DayView from './view/trip-days-item.js';
+import EventView from './view/trip-events-item.js';
 import {createEventEditElement} from './view/event-edit.js';
-import {createTripDaysElement} from './view/trip-days.js';
-import {createTripDaysItemElement} from './view/trip-days-item.js';
-import {createTripEventsItemElement} from './view/trip-events-item.js';
 import {trips, tripDays} from './mock/mock.js';
 import {renderTemplate, renderElement, RenderPosition} from './utils.js';
 
@@ -22,21 +22,22 @@ renderElement(tripMainElement, tripInfoElement.getElement(), RenderPosition.AFTE
 renderElement(tripMainControlsElement, new MenuView().getElement(), RenderPosition.AFTERBEGIN); // Отрисовка меню
 renderElement(tripMainControlsElement, new FilterView().getElement(), RenderPosition.BEFOREEND); // Отрисовка фильтров
 renderElement(tripEventsElement, new SortView().getElement(), RenderPosition.BEFOREEND); // Отрисовка сортировки
-renderTemplate(tripEventsElement, createTripDaysElement(), RenderPosition.BEFOREEND); // Отрисовка списка дней поездки
 
-const tripDaysElement = tripEventsElement.querySelector(`.trip-days`);
+const tripDaysList = new DaysListView();
 
 tripDays
   .forEach((day, index) => {
-    renderTemplate(tripDaysElement, createTripDaysItemElement(day, index), RenderPosition.BEFOREEND);
+    const tripDayElement = new DayView(day, index);
+    const tripEventsList = tripDayElement.getElement().querySelector(`.trip-events__list`);
 
-    const tripDayElement = tripDaysElement.querySelector(`.trip-days__item:last-child`);
-    const tripEventsListElement = tripDayElement.querySelector(`.trip-events__list`);
+    renderElement(tripDaysList.getElement(), tripDayElement.getElement(), RenderPosition.BEFOREEND);
 
     trips
       .filter((trip) => new Date(trip.startTime).toDateString() === day)
-      .forEach((trip) => renderTemplate(tripEventsListElement, createTripEventsItemElement(trip), `beforeend`)); // Отрисовка поездок внутри дня
+      .forEach((trip) => renderElement(tripEventsList, new EventView(trip).getElement(), RenderPosition.BEFOREEND)); // Отрисовка поездок внутри дня
   }); // Отрисовка дней
 
-const tripEventsListElement = tripDaysElement.querySelector(`.trip-events__list`);
+const tripEventsListElement = tripDaysList.getElement().querySelector(`.trip-events__list`);
 renderTemplate(tripEventsListElement, createEventEditElement(trips[0]), `afterbegin`); // Отрисовка редактирования места
+
+renderElement(tripEventsElement, tripDaysList.getElement(), RenderPosition.BEFOREEND); // Отрисовка списка дней поездки
