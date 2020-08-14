@@ -1,4 +1,4 @@
-import {getFormatEditTime, getFormatText} from '../utils.js';
+import {getFormatEditTime, getFormatText, createElement} from '../utils.js';
 import {preposition} from '../const.js';
 
 const createOffer = (offer) => {
@@ -16,7 +16,7 @@ const createOffer = (offer) => {
 
 const createPhoto = (photo) => `<img class="event__photo" src="${photo}" alt="Event photo"></img>`;
 
-export const createEventEditElement = (trip) => {
+const createEventEditElement = (trip) => {
   const {type, destination, description, startTime, endTime, price, offers, photos} = trip;
   const prep = preposition[type];
   const formattedStartTime = getFormatEditTime(startTime);
@@ -165,3 +165,25 @@ export const createEventEditElement = (trip) => {
     </form>
   </li>`;
 };
+
+export default class EventEdit {
+  constructor(trip) {
+    this._trip = trip;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventEditElement(this._trip);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

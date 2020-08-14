@@ -6,9 +6,9 @@ import SortView from './view/trip-sort.js';
 import DaysListView from './view/trip-days.js';
 import DayView from './view/trip-days-item.js';
 import EventView from './view/trip-events-item.js';
-import {createEventEditElement} from './view/event-edit.js';
+import EventEdit from './view/event-edit.js';
 import {trips, tripDays} from './mock/mock.js';
-import {renderTemplate, renderElement, RenderPosition} from './utils.js';
+import {renderElement, RenderPosition} from './utils.js';
 
 const bodyElement = document.querySelector(`.page-body`);
 const tripMainElement = bodyElement.querySelector(`.trip-main`);
@@ -38,6 +38,6 @@ tripDays
   }); // Отрисовка дней
 
 const tripEventsListElement = tripDaysList.getElement().querySelector(`.trip-events__list`);
-renderTemplate(tripEventsListElement, createEventEditElement(trips[0]), `afterbegin`); // Отрисовка редактирования места
+renderElement(tripEventsListElement, new EventEdit(trips[0]).getElement(), RenderPosition.AFTERBEGIN); // Отрисовка редактирования места
 
 renderElement(tripEventsElement, tripDaysList.getElement(), RenderPosition.BEFOREEND); // Отрисовка списка дней поездки
