@@ -37,11 +37,11 @@ export const renderTemplate = (container, template, place) => {
 export const renderElement = (container, element, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
-      container.append(element);
+      container.prepend(element);
       break;
 
     case RenderPosition.BEFOREEND:
-      container.prepend(element);
+      container.append(element);
       break;
   }
 };

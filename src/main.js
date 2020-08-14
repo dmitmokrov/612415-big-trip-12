@@ -1,6 +1,6 @@
 import {createMenuElement} from './view/menu.js';
 import TripInfoView from './view/trip-info.js';
-import {createTripCostElement} from './view/trip-cost.js';
+import TripCostView from './view/trip-cost.js';
 import {createFilterElement} from './view/filter.js';
 import {createTripSortElement} from './view/trip-sort.js';
 import {createEventEditElement} from './view/event-edit.js';
@@ -16,11 +16,11 @@ const tripMainControlsElement = tripMainElement.querySelector(`.trip-main__trip-
 const menuHeaderElement = tripMainControlsElement.querySelector(`h2`);
 const tripEventsElement = bodyElement.querySelector(`.trip-events`);
 
-renderElement(tripMainElement, new TripInfoView(trips).getElement(), RenderPosition.AFTERBEGIN); // Отрисовка информации о поездке
+const tripInfoElement = new TripInfoView(trips);
 
-const tripMainInfoElement = tripMainElement.querySelector(`.trip-main__trip-info`);
+renderElement(tripInfoElement.getElement(), new TripCostView(trips).getElement(), RenderPosition.BEFOREEND); // Отрисовка цены поездки
+renderElement(tripMainElement, tripInfoElement.getElement(), RenderPosition.AFTERBEGIN); // Отрисовка информации о поездке
 
-renderTemplate(tripMainInfoElement, createTripCostElement(trips), `beforeend`); // Отрисовка цены поездки
 renderTemplate(menuHeaderElement, createMenuElement(), `afterend`); // Отрисовка меню
 renderTemplate(tripMainControlsElement, createFilterElement(), `beforeend`); // Отрисовка фильтров
 renderTemplate(tripEventsElement, createTripSortElement(), `beforeend`); // Отрисовка сортировки
