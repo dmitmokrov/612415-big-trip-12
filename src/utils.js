@@ -1,3 +1,8 @@
+const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
 export const getRandomInteger = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
 
 export const getFormatNumber = (num) => num.toString().padStart(2, `0`);
@@ -18,3 +23,19 @@ export const getFormatEditTime = (time) => {
 };
 
 export const getFormatText = (text) => text.toLowerCase().split(` `).join(`-`);
+
+export const renderTemplate = (container, template, place) => {
+  container.insertAdjacentHTML(place, template);
+};
+
+export const renderElement = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.append(element);
+      break;
+
+    case RenderPosition.BEFOREEND:
+      container.prepend(element);
+      break;
+  }
+};
