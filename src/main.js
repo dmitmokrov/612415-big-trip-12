@@ -2,7 +2,7 @@ import MenuView from './view/menu.js';
 import TripInfoView from './view/trip-info.js';
 import TripCostView from './view/trip-cost.js';
 import FilterView from './view/filter.js';
-import {createTripSortElement} from './view/trip-sort.js';
+import SortView from './view/trip-sort.js';
 import {createEventEditElement} from './view/event-edit.js';
 import {createTripDaysElement} from './view/trip-days.js';
 import {createTripDaysItemElement} from './view/trip-days-item.js';
@@ -21,14 +21,14 @@ renderElement(tripInfoElement.getElement(), new TripCostView(trips).getElement()
 renderElement(tripMainElement, tripInfoElement.getElement(), RenderPosition.AFTERBEGIN); // Отрисовка информации о поездке
 renderElement(tripMainControlsElement, new MenuView().getElement(), RenderPosition.AFTERBEGIN); // Отрисовка меню
 renderElement(tripMainControlsElement, new FilterView().getElement(), RenderPosition.BEFOREEND); // Отрисовка фильтров
-renderTemplate(tripEventsElement, createTripSortElement(), `beforeend`); // Отрисовка сортировки
-renderTemplate(tripEventsElement, createTripDaysElement(), `beforeend`); // Отрисовка списка дней поездки
+renderElement(tripEventsElement, new SortView().getElement(), RenderPosition.BEFOREEND); // Отрисовка сортировки
+renderTemplate(tripEventsElement, createTripDaysElement(), RenderPosition.BEFOREEND); // Отрисовка списка дней поездки
 
 const tripDaysElement = tripEventsElement.querySelector(`.trip-days`);
 
 tripDays
   .forEach((day, index) => {
-    renderTemplate(tripDaysElement, createTripDaysItemElement(day, index), `beforeend`);
+    renderTemplate(tripDaysElement, createTripDaysItemElement(day, index), RenderPosition.BEFOREEND);
 
     const tripDayElement = tripDaysElement.querySelector(`.trip-days__item:last-child`);
     const tripEventsListElement = tripDayElement.querySelector(`.trip-events__list`);
