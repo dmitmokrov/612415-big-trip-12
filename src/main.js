@@ -7,11 +7,7 @@ import {createEventEditElement} from './view/event-edit.js';
 import {createTripDaysElement} from './view/trip-days.js';
 import {createTripDaysItemElement} from './view/trip-days-item.js';
 import {createTripEventsItemElement} from './view/trip-events-item.js';
-import {createTrip} from './mock/mock.js';
-
-const TRIPS_COUNT = 5;
-const trips = new Array(TRIPS_COUNT).fill().map(createTrip).sort((a, b) => a.startTime - b.startTime);
-const tripDays = [...new Set(trips.map((trip) => new Date(trip.startTime).toDateString()))];
+import {trips, tripDays} from './mock/mock.js';
 
 const bodyElement = document.querySelector(`.page-body`);
 const tripMainElement = bodyElement.querySelector(`.trip-main`);
