@@ -1,5 +1,5 @@
 import {createMenuElement} from './view/menu.js';
-import {createTripInfoElement} from './view/trip-info.js';
+import TripInfoView from './view/trip-info.js';
 import {createTripCostElement} from './view/trip-cost.js';
 import {createFilterElement} from './view/filter.js';
 import {createTripSortElement} from './view/trip-sort.js';
@@ -8,7 +8,7 @@ import {createTripDaysElement} from './view/trip-days.js';
 import {createTripDaysItemElement} from './view/trip-days-item.js';
 import {createTripEventsItemElement} from './view/trip-events-item.js';
 import {trips, tripDays} from './mock/mock.js';
-import {renderTemplate} from './utils.js';
+import {renderTemplate, renderElement, RenderPosition} from './utils.js';
 
 const bodyElement = document.querySelector(`.page-body`);
 const tripMainElement = bodyElement.querySelector(`.trip-main`);
@@ -16,7 +16,7 @@ const tripMainControlsElement = tripMainElement.querySelector(`.trip-main__trip-
 const menuHeaderElement = tripMainControlsElement.querySelector(`h2`);
 const tripEventsElement = bodyElement.querySelector(`.trip-events`);
 
-renderTemplate(tripMainElement, createTripInfoElement(trips), `afterbegin`); // Отрисовка информации о поездке
+renderElement(tripMainElement, new TripInfoView(trips).getElement(), RenderPosition.AFTERBEGIN); // Отрисовка информации о поездке
 
 const tripMainInfoElement = tripMainElement.querySelector(`.trip-main__trip-info`);
 
