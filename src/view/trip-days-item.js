@@ -1,6 +1,6 @@
-import {getFormatDate} from '../utils.js';
+import {getFormatDate, createElement} from '../utils.js';
 
-export const createTripDaysItemElement = (day, index) => {
+const createTripDaysItemElement = (day, index) => {
   const date = getFormatDate(day);
 
   return `<li class="trip-days__item  day">
@@ -11,3 +11,26 @@ export const createTripDaysItemElement = (day, index) => {
     <ul class="trip-events__list"></ul>
   </li>`;
 };
+
+export default class Day {
+  constructor(day, index) {
+    this._day = day;
+    this._index = index;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripDaysItemElement(this._day, this._index);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

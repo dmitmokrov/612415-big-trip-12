@@ -1,51 +1,61 @@
-import {createMenuElement} from './view/menu.js';
-import {createTripInfoElement} from './view/trip-info.js';
-import {createTripCostElement} from './view/trip-cost.js';
-import {createFilterElement} from './view/filter.js';
-import {createTripSortElement} from './view/trip-sort.js';
-import {createEventEditElement} from './view/event-edit.js';
-import {createTripDaysElement} from './view/trip-days.js';
-import {createTripDaysItemElement} from './view/trip-days-item.js';
-import {createTripEventsItemElement} from './view/trip-events-item.js';
-import {createTrip} from './mock/mock.js';
-
-const TRIPS_COUNT = 5;
-const trips = new Array(TRIPS_COUNT).fill().map(createTrip).sort((a, b) => a.startTime - b.startTime);
-const tripDays = [...new Set(trips.map((trip) => new Date(trip.startTime).toDateString()))];
+import MenuView from './view/menu.js';
+import TripInfoView from './view/trip-info.js';
+import TripCostView from './view/trip-cost.js';
+import FilterView from './view/filter.js';
+import SortView from './view/trip-sort.js';
+import DaysListView from './view/trip-days.js';
+import DayView from './view/trip-days-item.js';
+import EventView from './view/trip-events-item.js';
+import EventEditView from './view/event-edit.js';
+import {trips, tripDays} from './mock/mock.js';
+import {renderElement, RenderPosition} from './utils.js';
 
 const bodyElement = document.querySelector(`.page-body`);
 const tripMainElement = bodyElement.querySelector(`.trip-main`);
 const tripMainControlsElement = tripMainElement.querySelector(`.trip-main__trip-controls`);
-const menuHeaderElement = tripMainControlsElement.querySelector(`h2`);
 const tripEventsElement = bodyElement.querySelector(`.trip-events`);
 
-const render = (container, node, place) => {
-  container.insertAdjacentHTML(place, node);
+const tripInfoElement = new TripInfoView(trips);
+const tripDaysList = new DaysListView();
+
+const renderEvent = (eventList, trip) => {
+  const eventElement = new EventView(trip);
+  const eventEditElement = new EventEditView(trip);
+
+  const replaceCardToForm = () => {
+    eventList.replaceChild(eventEditElement.getElement(), eventElement.getElement());
+  };
+
+  const replaceFormToCard = () => {
+    eventList.replaceChild(eventElement.getElement(), eventEditElement.getElement());
+  };
+
+  eventElement.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, replaceCardToForm);
+
+  eventEditElement.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+  });
+
+  renderElement(eventList, eventElement.getElement(), RenderPosition.BEFOREEND);
 };
 
-render(tripMainElement, createTripInfoElement(trips), `afterbegin`); // Отрисовка информации о поездке
-
-const tripMainInfoElement = tripMainElement.querySelector(`.trip-main__trip-info`);
-
-render(tripMainInfoElement, createTripCostElement(trips), `beforeend`); // Отрисовка цены поездки
-render(menuHeaderElement, createMenuElement(), `afterend`); // Отрисовка меню
-render(tripMainControlsElement, createFilterElement(), `beforeend`); // Отрисовка фильтров
-render(tripEventsElement, createTripSortElement(), `beforeend`); // Отрисовка сортировки
-render(tripEventsElement, createTripDaysElement(), `beforeend`); // Отрисовка списка дней поездки
-
-const tripDaysElement = tripEventsElement.querySelector(`.trip-days`);
+renderElement(tripInfoElement.getElement(), new TripCostView(trips).getElement(), RenderPosition.BEFOREEND); // Отрисовка цены поездки
+renderElement(tripMainElement, tripInfoElement.getElement(), RenderPosition.AFTERBEGIN); // Отрисовка информации о поездке
+renderElement(tripMainControlsElement, new MenuView().getElement(), RenderPosition.AFTERBEGIN); // Отрисовка меню
+renderElement(tripMainControlsElement, new FilterView().getElement(), RenderPosition.BEFOREEND); // Отрисовка фильтров
+renderElement(tripEventsElement, new SortView().getElement(), RenderPosition.BEFOREEND); // Отрисовка сортировки
 
 tripDays
   .forEach((day, index) => {
-    render(tripDaysElement, createTripDaysItemElement(day, index), `beforeend`);
+    const tripDayElement = new DayView(day, index);
+    const tripEventsList = tripDayElement.getElement().querySelector(`.trip-events__list`);
 
-    const tripDayElement = tripDaysElement.querySelector(`.trip-days__item:last-child`);
-    const tripEventsListElement = tripDayElement.querySelector(`.trip-events__list`);
+    renderElement(tripDaysList.getElement(), tripDayElement.getElement(), RenderPosition.BEFOREEND);
 
     trips
       .filter((trip) => new Date(trip.startTime).toDateString() === day)
-      .forEach((trip) => render(tripEventsListElement, createTripEventsItemElement(trip), `beforeend`)); // Отрисовка поездок внутри дня
+      .forEach((trip) => renderEvent(tripEventsList, trip)); // Отрисовка поездок внутри дня
   }); // Отрисовка дней
 
-const tripEventsListElement = tripDaysElement.querySelector(`.trip-events__list`);
-render(tripEventsListElement, createEventEditElement(trips[0]), `afterbegin`); // Отрисовка редактирования места
+renderElement(tripEventsElement, tripDaysList.getElement(), RenderPosition.BEFOREEND); // Отрисовка списка дней поездки

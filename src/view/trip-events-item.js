@@ -1,4 +1,4 @@
-import {getFormatNumber, getFormatTime} from '../utils.js';
+import {getFormatNumber, getFormatTime, createElement} from '../utils.js';
 import {preposition} from '../const.js';
 
 const getTripDuration = (start, end) => {
@@ -24,7 +24,7 @@ const createOffer = (offer) => {
   </li>`;
 };
 
-export const createTripEventsItemElement = (trip) => {
+const createTripEventsItemElement = (trip) => {
   const {type, destination, startTime, endTime, price, offers} = trip;
   const prep = preposition[type];
   const formattedStartTime = getFormatTime(startTime);
@@ -63,3 +63,25 @@ export const createTripEventsItemElement = (trip) => {
     </div>
   </li>`;
 };
+
+export default class Event {
+  constructor(trip) {
+    this._trip = trip;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripEventsItemElement(this._trip);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
