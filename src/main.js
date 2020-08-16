@@ -7,6 +7,7 @@ import DaysListView from './view/trip-days.js';
 import DayView from './view/trip-days-item.js';
 import EventView from './view/trip-events-item.js';
 import EventEditView from './view/event-edit.js';
+import NoEvent from './view/no-event.js';
 import {trips, tripDays} from './mock/mock.js';
 import {renderElement, RenderPosition} from './utils.js';
 
@@ -56,9 +57,13 @@ renderElement(tripInfoElement.getElement(), new TripCostView(trips).getElement()
 renderElement(tripMainElement, tripInfoElement.getElement(), RenderPosition.AFTERBEGIN); // Отрисовка информации о поездке
 renderElement(tripMainControlsElement, new MenuView().getElement(), RenderPosition.AFTERBEGIN); // Отрисовка меню
 renderElement(tripMainControlsElement, new FilterView().getElement(), RenderPosition.BEFOREEND); // Отрисовка фильтров
-renderElement(tripEventsElement, new SortView().getElement(), RenderPosition.BEFOREEND); // Отрисовка сортировки
 
-tripDays
+if (trips.length === 0) {
+  renderElement(tripEventsElement, new NoEvent().getElement(), RenderPosition.BEFOREEND);
+} else {
+  renderElement(tripEventsElement, new SortView().getElement(), RenderPosition.BEFOREEND); // Отрисовка сортировки
+
+  tripDays
   .forEach((day, index) => {
     const tripDayElement = new DayView(day, index);
     const tripEventsList = tripDayElement.getElement().querySelector(`.trip-events__list`);
@@ -70,4 +75,5 @@ tripDays
       .forEach((trip) => renderEvent(tripEventsList, trip)); // Отрисовка поездок внутри дня
   }); // Отрисовка дней
 
-renderElement(tripEventsElement, tripDaysList.getElement(), RenderPosition.BEFOREEND); // Отрисовка списка дней поездки
+  renderElement(tripEventsElement, tripDaysList.getElement(), RenderPosition.BEFOREEND); // Отрисовка списка дней поездки
+}

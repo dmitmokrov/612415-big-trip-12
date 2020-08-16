@@ -1,6 +1,16 @@
 import {getFormatDate, createElement} from '../utils.js';
 
 const createTripInfoElement = (trips) => {
+  if (trips.length === 0) {
+    return `<section class="trip-main__trip-info  trip-info">
+    <div class="trip-info__main">
+      <h1 class="trip-info__title"></h1>
+
+      <p class="trip-info__dates"></p>
+    </div>
+  </section>`;
+  }
+
   const firstLocation = trips[0];
   const lastLocation = trips[trips.length - 1];
   const dates = `${getFormatDate(firstLocation.startTime)}&nbsp;&mdash;&nbsp;${getFormatDate(lastLocation.startTime)}`;
