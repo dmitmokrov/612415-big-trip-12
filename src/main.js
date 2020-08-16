@@ -30,11 +30,23 @@ const renderEvent = (eventList, trip) => {
     eventList.replaceChild(eventElement.getElement(), eventEditElement.getElement());
   };
 
-  eventElement.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, replaceCardToForm);
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  eventElement.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceCardToForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
 
   eventEditElement.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceFormToCard();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   renderElement(eventList, eventElement.getElement(), RenderPosition.BEFOREEND);
