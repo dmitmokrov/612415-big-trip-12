@@ -39,13 +39,12 @@ const renderEvent = (eventList, trip) => {
     }
   };
 
-  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventComponent.setClickHandler(() => {
     replaceCardToForm();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  eventEditComponent.setFormSubmitHandler(() => {
     replaceFormToCard();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
@@ -64,16 +63,16 @@ if (trips.length === 0) {
   render(tripEventsElement, new SortView(), RenderPosition.BEFOREEND); // Отрисовка сортировки
 
   tripDays
-  .forEach((day, index) => {
-    const tripDayComponent = new DayView(day, index);
-    const tripEventsList = tripDayComponent.getElement().querySelector(`.trip-events__list`);
+    .forEach((day, index) => {
+      const tripDayComponent = new DayView(day, index);
+      const tripEventsList = tripDayComponent.getElement().querySelector(`.trip-events__list`);
 
-    render(dayListComponent, tripDayComponent, RenderPosition.BEFOREEND);
+      render(dayListComponent, tripDayComponent, RenderPosition.BEFOREEND);
 
-    trips
-      .filter((trip) => new Date(trip.startTime).toDateString() === day)
-      .forEach((trip) => renderEvent(tripEventsList, trip)); // Отрисовка поездок внутри дня
-  }); // Отрисовка дней
+      trips
+        .filter((trip) => new Date(trip.startTime).toDateString() === day)
+        .forEach((trip) => renderEvent(tripEventsList, trip)); // Отрисовка поездок внутри дня
+    }); // Отрисовка дней
 
   render(tripEventsElement, dayListComponent, RenderPosition.BEFOREEND); // Отрисовка списка дней поездки
 }

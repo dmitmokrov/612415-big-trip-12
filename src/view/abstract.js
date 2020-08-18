@@ -6,6 +6,7 @@ export default class Abstract {
       throw new Error(`Нельзя создавать экземпляр класса Astract, используйте наследование`);
     }
     this._element = null;
+    this._callback = {};
   }
 
   getTemplate() {

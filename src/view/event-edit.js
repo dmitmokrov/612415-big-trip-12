@@ -171,9 +171,20 @@ export default class EventEdit extends AbstractView {
   constructor(trip) {
     super();
     this._trip = trip;
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createEventEditElement(this._trip);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.submit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.submit = callback;
+    this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
   }
 }
