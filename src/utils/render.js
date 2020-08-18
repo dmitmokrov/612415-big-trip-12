@@ -12,25 +12,55 @@ export const createElement = (template) => {
 };
 
 export const renderTemplate = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-export const render = (container, element, place) => {
   if (container instanceof Abstract) {
     container = container.getElement();
   }
 
-  if (element instanceof Abstract) {
-    element = element.getElement();
+  container.insertAdjacentHTML(place, template);
+};
+
+export const render = (container, child, place) => {
+  if (container instanceof Abstract) {
+    container = container.getElement();
+  }
+
+  if (child instanceof Abstract) {
+    child = child.getElement();
   }
 
   switch (place) {
     case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
+      container.prepend(child);
       break;
 
     case RenderPosition.BEFOREEND:
-      container.append(element);
+      container.append(child);
       break;
   }
+};
+
+export const replace = (newChild, oldChild) => {
+  if (newChild instanceof Abstract) {
+    newChild = newChild.getElement();
+  }
+
+  if (oldChild instanceof Abstract) {
+    oldChild = oldChild.getElement();
+  }
+
+  const parent = oldChild.parentElement;
+
+  if (parent === null || newChild === null || oldChild === null) {
+    throw new Error(`Нельзя заменить несуществующие элементы`);
+  }
+  parent.replaceChild(newChild, oldChild);
+};
+
+export const remove = (component) => {
+  if (!(component instanceof Abstract)) {
+    throw new Error(`Можно удалить только компонент`);
+  }
+
+  component.getElement().remove();
+  component.remove();
 };

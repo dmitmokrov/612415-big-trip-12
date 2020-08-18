@@ -9,26 +9,26 @@ import EventView from './view/event.js';
 import EventEditView from './view/event-edit.js';
 import NoEvent from './view/no-event.js';
 import {trips, tripDays} from './mock/mock.js';
-import {render, RenderPosition} from './utils/render.js';
+import {render, RenderPosition, replace} from './utils/render.js';
 
 const bodyElement = document.querySelector(`.page-body`);
 const tripMainElement = bodyElement.querySelector(`.trip-main`);
 const tripMainControlsElement = tripMainElement.querySelector(`.trip-main__trip-controls`);
 const tripEventsElement = bodyElement.querySelector(`.trip-events`);
 
-const tripInfoElement = new TripInfoView(trips);
-const tripDaysList = new DayListView();
+const tripInfoComponent = new TripInfoView(trips);
+const dayListComponent = new DayListView();
 
 const renderEvent = (eventList, trip) => {
-  const eventElement = new EventView(trip);
-  const eventEditElement = new EventEditView(trip);
+  const eventComponent = new EventView(trip);
+  const eventEditComponent = new EventEditView(trip);
 
   const replaceCardToForm = () => {
-    eventList.replaceChild(eventEditElement.getElement(), eventElement.getElement());
+    replace(eventEditComponent, eventComponent);
   };
 
   const replaceFormToCard = () => {
-    eventList.replaceChild(eventElement.getElement(), eventEditElement.getElement());
+    replace(eventComponent, eventEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -39,22 +39,22 @@ const renderEvent = (eventList, trip) => {
     }
   };
 
-  eventElement.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceCardToForm();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditElement.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
+  eventEditComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceFormToCard();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  render(eventList, eventElement.getElement(), RenderPosition.BEFOREEND);
+  render(eventList, eventComponent, RenderPosition.BEFOREEND);
 };
 
-render(tripInfoElement, new TripCostView(trips), RenderPosition.BEFOREEND); // Отрисовка цены поездки
-render(tripMainElement, tripInfoElement, RenderPosition.AFTERBEGIN); // Отрисовка информации о поездке
+render(tripInfoComponent, new TripCostView(trips), RenderPosition.BEFOREEND); // Отрисовка цены поездки
+render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN); // Отрисовка информации о поездке
 render(tripMainControlsElement, new MenuView(), RenderPosition.AFTERBEGIN); // Отрисовка меню
 render(tripMainControlsElement, new FilterView(), RenderPosition.BEFOREEND); // Отрисовка фильтров
 
@@ -65,15 +65,15 @@ if (trips.length === 0) {
 
   tripDays
   .forEach((day, index) => {
-    const tripDayElement = new DayView(day, index);
-    const tripEventsList = tripDayElement.getElement().querySelector(`.trip-events__list`);
+    const tripDayComponent = new DayView(day, index);
+    const tripEventsList = tripDayComponent.getElement().querySelector(`.trip-events__list`);
 
-    render(tripDaysList, tripDayElement, RenderPosition.BEFOREEND);
+    render(dayListComponent, tripDayComponent, RenderPosition.BEFOREEND);
 
     trips
       .filter((trip) => new Date(trip.startTime).toDateString() === day)
       .forEach((trip) => renderEvent(tripEventsList, trip)); // Отрисовка поездок внутри дня
   }); // Отрисовка дней
 
-  render(tripEventsElement, tripDaysList, RenderPosition.BEFOREEND); // Отрисовка списка дней поездки
+  render(tripEventsElement, dayListComponent, RenderPosition.BEFOREEND); // Отрисовка списка дней поездки
 }
