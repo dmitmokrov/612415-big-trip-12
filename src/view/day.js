@@ -1,4 +1,5 @@
-import {getFormatDate, createElement} from '../utils.js';
+import AbstractView from './abstract.js';
+import {getFormatDate} from '../utils.js';
 
 const createTripDaysItemElement = (day, index) => {
   const date = getFormatDate(day);
@@ -12,25 +13,14 @@ const createTripDaysItemElement = (day, index) => {
   </li>`;
 };
 
-export default class Day {
+export default class Day extends AbstractView {
   constructor(day, index) {
+    super();
     this._day = day;
     this._index = index;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripDaysItemElement(this._day, this._index);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

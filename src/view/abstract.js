@@ -1,16 +1,15 @@
 import {createElement} from '../utils.js';
 
-const createTripDaysElement = () => (
-  `<ul class="trip-days"></ul>`
-);
-
-export default class DaysList {
+export default class Abstract {
   constructor() {
+    if (new.target === Abstract) {
+      throw new Error(`Нельзя создавать экземпляр класса Astract, используйте наследование`);
+    }
     this._element = null;
   }
 
   getTemplate() {
-    return createTripDaysElement();
+    throw new Error(`Нужно описать метод getTemplate`);
   }
 
   getElement() {

@@ -1,4 +1,5 @@
-import {getFormatNumber, getFormatTime, createElement} from '../utils.js';
+import AbstractView from './abstract.js';
+import {getFormatNumber, getFormatTime} from '../utils.js';
 import {preposition} from '../const.js';
 
 const getTripDuration = (start, end) => {
@@ -64,24 +65,13 @@ const createTripEventsItemElement = (trip) => {
   </li>`;
 };
 
-export default class Event {
+export default class Event extends AbstractView {
   constructor(trip) {
+    super();
     this._trip = trip;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripEventsItemElement(this._trip);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

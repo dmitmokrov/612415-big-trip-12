@@ -2,10 +2,10 @@ import MenuView from './view/menu.js';
 import TripInfoView from './view/trip-info.js';
 import TripCostView from './view/trip-cost.js';
 import FilterView from './view/filter.js';
-import SortView from './view/trip-sort.js';
-import DaysListView from './view/trip-days.js';
-import DayView from './view/trip-days-item.js';
-import EventView from './view/trip-events-item.js';
+import SortView from './view/sort.js';
+import DayListView from './view/day-list.js';
+import DayView from './view/day.js';
+import EventView from './view/event.js';
 import EventEditView from './view/event-edit.js';
 import NoEvent from './view/no-event.js';
 import {trips, tripDays} from './mock/mock.js';
@@ -17,7 +17,7 @@ const tripMainControlsElement = tripMainElement.querySelector(`.trip-main__trip-
 const tripEventsElement = bodyElement.querySelector(`.trip-events`);
 
 const tripInfoElement = new TripInfoView(trips);
-const tripDaysList = new DaysListView();
+const tripDaysList = new DayListView();
 
 const renderEvent = (eventList, trip) => {
   const eventElement = new EventView(trip);

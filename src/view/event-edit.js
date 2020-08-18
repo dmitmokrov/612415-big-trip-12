@@ -1,4 +1,5 @@
-import {getFormatEditTime, getFormatText, createElement} from '../utils.js';
+import AbstractView from './abstract.js';
+import {getFormatEditTime, getFormatText} from '../utils.js';
 import {preposition} from '../const.js';
 
 const createOffer = (offer) => {
@@ -166,24 +167,13 @@ const createEventEditElement = (trip) => {
   </li>`;
 };
 
-export default class EventEdit {
+export default class EventEdit extends AbstractView {
   constructor(trip) {
+    super();
     this._trip = trip;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventEditElement(this._trip);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
