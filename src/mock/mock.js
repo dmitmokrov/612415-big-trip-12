@@ -81,4 +81,3 @@ const createTrip = () => {
 };
 
 export const trips = new Array(TRIPS_COUNT).fill().map(createTrip).sort((a, b) => a.startTime - b.startTime);
-export const tripDays = [...new Set(trips.map((trip) => new Date(trip.startTime).toDateString()))];
