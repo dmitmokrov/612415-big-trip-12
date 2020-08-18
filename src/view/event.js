@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {getFormatNumber, getFormatTime} from '../utils.js';
+import {getFormatNumber, getFormatTime} from '../utils/common.js';
 import {preposition} from '../const.js';
 
 const getTripDuration = (start, end) => {

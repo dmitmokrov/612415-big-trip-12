@@ -1,4 +1,4 @@
-import {getRandomInteger} from '../utils.js';
+import {getRandomInteger} from '../utils/common.js';
 
 const TRIP_TYPES = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`];
 const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`, `London`, `Paris`];

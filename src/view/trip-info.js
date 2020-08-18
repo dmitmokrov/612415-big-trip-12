@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {getFormatDate} from '../utils.js';
+import {getFormatDate} from '../utils/common.js';
 
 const createTripInfoElement = (trips) => {
   const firstLocation = trips[0];

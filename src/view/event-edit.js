@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {getFormatEditTime, getFormatText} from '../utils.js';
+import {getFormatEditTime, getFormatText} from '../utils/common.js';
 import {preposition} from '../const.js';
 
 const createOffer = (offer) => {
