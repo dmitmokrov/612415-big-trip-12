@@ -9,6 +9,8 @@ import {render, RenderPosition, replace} from '../utils/render';
 export default class Trip {
   constructor(tripContainer) {
     this._tripContainer = tripContainer;
+    this._trips = null;
+    this.tripDays = null;
 
     this._sortComponent = new SortView();
     this._dayListComponent = new DayListView();
@@ -19,7 +21,13 @@ export default class Trip {
     this._trips = trips.slice();
     this._tripDays = [...new Set(this._trips.map((trip) => new Date(trip.startTime).toDateString()))];
 
-    this._renderTrip();
+    if (this._trips.length === 0) {
+      this._renderNoEvent();
+    } else {
+      this._renderSort();
+      this._tripDays.forEach(this._renderDay.bind(this));
+      this._renderDayList();
+    }
   }
 
   _renderSort() {
@@ -76,20 +84,5 @@ export default class Trip {
 
   _renderNoEvent() {
     render(this._tripContainer, new NoEvent(), RenderPosition.BEFOREEND);
-  }
-
-  _renderTrip() {
-    if (this._trips.length === 0) {
-      this._renderNoEvent();
-    } else {
-      this._renderSort();
-
-      this._tripDays
-        .forEach((day, index) => {
-          this._renderDay(day, index);
-        });
-
-      this._renderDayList();
-    }
   }
 }
