@@ -1,4 +1,4 @@
-import {getRandomInteger} from '../utils.js';
+import {getRandomInteger} from '../utils/common.js';
 
 const TRIP_TYPES = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`];
 const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`, `London`, `Paris`];
@@ -81,4 +81,3 @@ const createTrip = () => {
 };
 
 export const trips = new Array(TRIPS_COUNT).fill().map(createTrip).sort((a, b) => a.startTime - b.startTime);
-export const tripDays = [...new Set(trips.map((trip) => new Date(trip.startTime).toDateString()))];
