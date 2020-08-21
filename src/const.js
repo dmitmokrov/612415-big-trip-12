@@ -10,3 +10,9 @@ export const preposition = {
   'Drive': `to`,
   'Flight': `to`
 };
+
+export const SortType = {
+  DEFAULT: `event`,
+  TIME: `time`,
+  PRICE: `price`
+};

@@ -18,3 +18,6 @@ export const getFormatEditTime = (time) => {
 };
 
 export const getFormatText = (text) => text.toLowerCase().split(` `).join(`-`);
+
+export const sortByTime = (a, b) => (b.endTime - b.startTime - a.endTime + a.startTime);
+export const sortByPrice = (a, b) => b.price - a.price;
