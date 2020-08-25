@@ -11,6 +11,7 @@ export default class Trip {
   constructor(tripContainer) {
     this._tripContainer = tripContainer;
     this._trips = null;
+    this._eventPresenter = {};
 
     this._sortComponent = new SortView();
     this._dayListComponent = new DayListView();
@@ -34,15 +35,13 @@ export default class Trip {
     const tripDays = [...new Set(trips.map((trip) => new Date(trip.startTime).toDateString()))];
     const days = isDefaultSorting ? tripDays : [true];
 
-    this._dayListComponent.getElement().innerHTML = ``;
-
     days.forEach((day, index) => {
       const tripDayComponent = isDefaultSorting ? new DayView(day, index) : new DayView();
       const tripEventList = tripDayComponent.getElement().querySelector(`.trip-events__list`);
 
       trips
         .filter((trip) => isDefaultSorting ? new Date(trip.startTime).toDateString() === day : trip)
-        .forEach((trip) => this._renderEvent(tripEventList, trip));
+        .forEach((event) => this._renderEvent(tripEventList, event));
 
       render(this._dayListComponent, tripDayComponent, RenderPosition.BEFOREEND);
     });
@@ -52,6 +51,8 @@ export default class Trip {
 
   _handleSortTypeChange(sortType) {
     const trips = this._trips.slice();
+    this._clearEvents();
+
     switch (sortType) {
       case SortType.TIME:
         this._renderEvents(trips.sort(sortByTime), false);
@@ -71,8 +72,15 @@ export default class Trip {
     render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderEvent(eventList, trip) {
+  _renderEvent(eventList, event) {
     const eventPresenter = new EventPresenter(eventList);
-    eventPresenter.init(trip);
+    eventPresenter.init(event);
+    this._eventPresenter[event.id] = eventPresenter;
+  }
+
+  _clearEvents() {
+    Object.values(this._eventPresenter).forEach((presenter) => presenter.destroy());
+    this._eventPresenter = {};
+    this._dayListComponent.getElement().innerHTML = ``; // для удаления отрисованных дней
   }
 }

@@ -65,10 +65,13 @@ const getDescription = (arr) => {
 };
 const getPhotos = () => new Array(getRandomInteger(1, 5)).fill().map(() => `http://picsum.photos/248/152?r=${Math.random()}`);
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const createTrip = () => {
   const startTime = getRandomDate();
   const endTime = getRandomDate();
   return {
+    id: generateId(),
     type: TRIP_TYPES[getRandomInteger(0, TRIP_TYPES.length - 1)],
     destination: CITIES[getRandomInteger(0, CITIES.length - 1)],
     description: getDescription(descriptionText),
