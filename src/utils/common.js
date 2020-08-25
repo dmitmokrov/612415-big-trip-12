@@ -21,3 +21,12 @@ export const getFormatText = (text) => text.toLowerCase().split(` `).join(`-`);
 
 export const sortByTime = (a, b) => (b.endTime - b.startTime - a.endTime + a.startTime);
 export const sortByPrice = (a, b) => b.price - a.price;
+
+export const updateItem = (arr, item) => {
+  const index = arr.findIndex((elem) => item.id === elem.id);
+  if (index === -1) {
+    return arr;
+  }
+
+  return [...arr.slice(0, index), item, ...arr.slice(index + 1)];
+};

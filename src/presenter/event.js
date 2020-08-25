@@ -3,15 +3,17 @@ import EventEditView from '../view/event-edit.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
 
 export default class Event {
-  constructor(eventList) {
+  constructor(eventList, changeData) {
     this._eventList = eventList;
+    this._changeData = changeData;
     this._event = null;
     this._eventComponent = null;
     this._eventEditComponent = null;
 
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
-    this._handleEventClick = this._handleEventClick.bind(this);
-    this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._eventClickHandler = this._eventClickHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
   }
 
   init(event) {
@@ -22,19 +24,20 @@ export default class Event {
     this._eventComponent = new EventView(event);
     this._eventEditComponent = new EventEditView(event);
 
-    this._eventComponent.setClickHandler(this._handleEventClick);
-    this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._eventComponent.setClickHandler(this._eventClickHandler);
+    this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
+    this._eventEditComponent.setFavoriteChangeHandler(this._favoriteChangeHandler);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventList, this._eventComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-    if (this._eventList.getElement().contains(prevEventComponent.getElement())) {
+    if (this._eventList.contains(prevEventComponent.getElement())) {
       replace(this._eventComponent, prevEventComponent);
     }
 
-    if (this._eventList.getElement().contains(prevEventEditComponent.getElement())) {
+    if (this._eventList.contains(prevEventEditComponent.getElement())) {
       replace(this._eventEditComponent, prevEventEditComponent);
     }
 
@@ -64,11 +67,15 @@ export default class Event {
     }
   }
 
-  _handleEventClick() {
+  _eventClickHandler() {
     this._replaceCardToForm();
   }
 
-  _handleFormSubmit() {
+  _formSubmitHandler() {
     this._replaceFormToCard();
+  }
+
+  _favoriteChangeHandler() {
+    this._changeData(Object.assign({}, this._event, {isFavorite: !this._event.isFavorite}));
   }
 }

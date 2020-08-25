@@ -5,7 +5,7 @@ import NoEvent from '../view/no-event.js';
 import EventPresenter from './event.js';
 import {render, RenderPosition} from '../utils/render';
 import {SortType} from '../const.js';
-import {sortByTime, sortByPrice} from '../utils/common.js';
+import {sortByTime, sortByPrice, updateItem} from '../utils/common.js';
 
 export default class Trip {
   constructor(tripContainer) {
@@ -17,7 +17,8 @@ export default class Trip {
     this._dayListComponent = new DayListView();
     this._noEventComponent = new NoEvent();
 
-    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
+    this._eventChangeHandler = this._eventChangeHandler.bind(this);
   }
 
   init(trips) {
@@ -29,6 +30,11 @@ export default class Trip {
       this._renderSort();
       this._renderEvents();
     }
+  }
+
+  _eventChangeHandler(updatedEvent) {
+    this._trips = updateItem(this._trips, updatedEvent);
+    this._eventPresenter[updatedEvent.id].init(updatedEvent);
   }
 
   _renderEvents(trips = this._trips, isDefaultSorting = true) {
@@ -49,7 +55,7 @@ export default class Trip {
     render(this._tripContainer, this._dayListComponent, RenderPosition.BEFOREEND);
   }
 
-  _handleSortTypeChange(sortType) {
+  _sortTypeChangeHandler(sortType) {
     const trips = this._trips.slice();
     this._clearEvents();
 
@@ -68,12 +74,12 @@ export default class Trip {
   }
 
   _renderSort() {
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    this._sortComponent.setSortTypeChangeHandler(this._sortTypeChangeHandler);
     render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
   _renderEvent(eventList, event) {
-    const eventPresenter = new EventPresenter(eventList);
+    const eventPresenter = new EventPresenter(eventList, this._eventChangeHandler);
     eventPresenter.init(event);
     this._eventPresenter[event.id] = eventPresenter;
   }

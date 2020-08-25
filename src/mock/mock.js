@@ -79,7 +79,8 @@ const createTrip = () => {
     endTime: Math.max(startTime, endTime),
     price: getRandomInteger(10, 500),
     photos: getPhotos(),
-    offers: offers.slice(0, getRandomInteger(0, 5))
+    offers: offers.slice(0, getRandomInteger(0, 5)),
+    isFavorite: Boolean(getRandomInteger(0, 1))
   };
 };
 
