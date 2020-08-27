@@ -74,7 +74,7 @@ const createTrip = () => {
     id: generateId(),
     type: TRIP_TYPES[getRandomInteger(0, TRIP_TYPES.length - 1)],
     destination: CITIES[getRandomInteger(0, CITIES.length - 1)],
-    description: getDescription(descriptionText),
+    // description: getDescription(descriptionText),
     startTime: Math.min(startTime, endTime),
     endTime: Math.max(startTime, endTime),
     price: getRandomInteger(10, 500),

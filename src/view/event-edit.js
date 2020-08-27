@@ -1,6 +1,6 @@
 import SmartView from './smart.js';
 import {getFormatEditTime, getFormatText} from '../utils/common.js';
-import {preposition} from '../const.js';
+import {preposition, Description} from '../const.js';
 
 const createOffer = (offer) => {
   const {title, price, isChecked} = offer;
@@ -18,7 +18,8 @@ const createOffer = (offer) => {
 const createPhoto = (photo) => `<img class="event__photo" src="${photo}" alt="Event photo"></img>`;
 
 const createEventEditElement = (trip) => {
-  const {type, destination, description, startTime, endTime, price, offers, photos, isFavorite} = trip;
+  const {type, destination, startTime, endTime, price, offers, photos, isFavorite} = trip;
+  const description = Description[destination.toUpperCase()] || ``;
   const prep = preposition[type];
   const formattedStartTime = getFormatEditTime(startTime);
   const formattedEndTime = getFormatEditTime(endTime);
@@ -193,6 +194,10 @@ export default class EventEdit extends SmartView {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  reset(event) {
+    this.updateData(event);
   }
 
   _setInnerHandlers() {
