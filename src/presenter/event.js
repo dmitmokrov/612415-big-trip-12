@@ -13,9 +13,6 @@ export default class Event {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._eventClickHandler = this._eventClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
-    this._typeChangeHandler = this._typeChangeHandler.bind(this);
-    this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
   }
 
   init(event) {
@@ -28,9 +25,6 @@ export default class Event {
 
     this._eventComponent.setClickHandler(this._eventClickHandler);
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
-    this._eventEditComponent.setFavoriteChangeHandler(this._favoriteChangeHandler);
-    this._eventEditComponent.setTypeChangeHandler(this._typeChangeHandler);
-    this._eventEditComponent.setDestinationChangeHandler(this._destinationChangeHandler);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventList, this._eventComponent, RenderPosition.BEFOREEND);
@@ -75,19 +69,8 @@ export default class Event {
     this._replaceCardToForm();
   }
 
-  _formSubmitHandler() {
+  _formSubmitHandler(event) {
+    this._changeData(event);
     this._replaceFormToCard();
-  }
-
-  _favoriteChangeHandler() {
-    this._changeData(Object.assign({}, this._event, {isFavorite: !this._event.isFavorite}));
-  }
-
-  _typeChangeHandler(newType) {
-    this._changeData(Object.assign({}, this._event, {type: newType}));
-  }
-
-  _destinationChangeHandler(newDestination) {
-    this._changeData(Object.assign({}, this._event, {destination: newDestination}));
   }
 }

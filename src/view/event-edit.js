@@ -177,6 +177,8 @@ export default class EventEdit extends AbstractView {
     this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
     this._typeChangeHandler = this._typeChangeHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
@@ -192,6 +194,13 @@ export default class EventEdit extends AbstractView {
 
     parent.replaceChild(newElement, prevElement);
     prevElement = null;
+
+    this.restoreHandlers();
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
   }
 
   updateData(update) {
@@ -200,51 +209,37 @@ export default class EventEdit extends AbstractView {
     }
 
     this._trip = Object.assign({}, this._trip, update);
-    this._updateElement();
+    this.updateElement();
   }
 
   setFormSubmitHandler(callback) {
-    this._callback.submit = callback;
+    this._callback.formSubmit = callback;
     this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
   }
 
-  setFavoriteChangeHandler(callback) {
-    this._callback.favoriteChange = callback;
+  _setInnerHandlers() {
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._favoriteChangeHandler);
-  }
-
-  setTypeChangeHandler(callback) {
-    this._callback.typeChange = callback;
     this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeChangeHandler);
-  }
-
-  setDestinationChangeHandler(callback) {
-    this._callback.destinationChange = callback;
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._destinationChangeHandler);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.submit();
+    this._callback.formSubmit(this._trip);
   }
 
   _favoriteChangeHandler(evt) {
     evt.preventDefault();
-    this._callback.favoriteChange();
+    this.updateData({isFavorite: !this._trip.isFavorite});
   }
 
   _typeChangeHandler(evt) {
     evt.preventDefault();
-    this._callback.typeChange(evt.target.value);
+    this.updateData({type: evt.target.value});
   }
 
   _destinationChangeHandler(evt) {
     evt.preventDefault();
-    this._callback.destinationChange(evt.target.value);
+    this.updateData({destination: evt.target.value});
   }
-
-  // _destinationChangeHandler(evt) {
-  //   evt.preventDefault();
-  //   this.updateData({destination: evt.target.value});
-  // }
 }
