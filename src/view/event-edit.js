@@ -1,4 +1,4 @@
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 import {getFormatEditTime, getFormatText} from '../utils/common.js';
 import {preposition} from '../const.js';
 
@@ -169,7 +169,7 @@ const createEventEditElement = (trip) => {
   </li>`;
 };
 
-export default class EventEdit extends AbstractView {
+export default class EventEdit extends SmartView {
   constructor(trip) {
     super();
     this._trip = trip;
@@ -185,31 +185,9 @@ export default class EventEdit extends AbstractView {
     return createEventEditElement(this._trip);
   }
 
-  updateElement() {
-    let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-    prevElement = null;
-
-    this.restoreHandlers();
-  }
-
   restoreHandlers() {
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
-  }
-
-  updateData(update) {
-    if (!update) {
-      return;
-    }
-
-    this._trip = Object.assign({}, this._trip, update);
-    this.updateElement();
   }
 
   setFormSubmitHandler(callback) {
