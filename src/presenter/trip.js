@@ -19,6 +19,7 @@ export default class Trip {
 
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
     this._eventChangeHandler = this._eventChangeHandler.bind(this);
+    this._modeChangeHandler = this._modeChangeHandler.bind(this);
   }
 
   init(trips) {
@@ -73,13 +74,17 @@ export default class Trip {
     }
   }
 
+  _modeChangeHandler() {
+    Object.values(this._eventPresenter).forEach((presenter) => presenter.resetView());
+  }
+
   _renderSort() {
     this._sortComponent.setSortTypeChangeHandler(this._sortTypeChangeHandler);
     render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
   _renderEvent(eventList, event) {
-    const eventPresenter = new EventPresenter(eventList, this._eventChangeHandler);
+    const eventPresenter = new EventPresenter(eventList, this._eventChangeHandler, this._modeChangeHandler);
     eventPresenter.init(event);
     this._eventPresenter[event.id] = eventPresenter;
   }
