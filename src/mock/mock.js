@@ -4,7 +4,7 @@ const TRIP_TYPES = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Fligh
 const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`, `London`, `Paris`];
 const TRIPS_COUNT = 7;
 
-const descriptionText = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit. `, `Cras aliquet varius magna, non porta ligula feugiat eget. `, `Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. `, `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. `, `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. `, `Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. `, `Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`];
+// const descriptionText = [`Lorem ipsum dolor sit amet, consectetur adipiscing elit. `, `Cras aliquet varius magna, non porta ligula feugiat eget. `, `Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. `, `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. `, `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. `, `Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. `, `Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`];
 
 const offers = [
   {
@@ -60,23 +60,27 @@ const offers = [
 ];
 
 const getRandomDate = () => Date.now() + Math.floor(Math.random() * 7 * 24 * getRandomInteger(0, 60) * 60 * 1000);
-const getDescription = (arr) => {
-  return arr.slice(0, getRandomInteger(1, arr.length - 1)).join(``);
-};
+// const getDescription = (arr) => {
+//   return arr.slice(0, getRandomInteger(1, arr.length - 1)).join(``);
+// };
 const getPhotos = () => new Array(getRandomInteger(1, 5)).fill().map(() => `http://picsum.photos/248/152?r=${Math.random()}`);
+
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const createTrip = () => {
   const startTime = getRandomDate();
   const endTime = getRandomDate();
   return {
+    id: generateId(),
     type: TRIP_TYPES[getRandomInteger(0, TRIP_TYPES.length - 1)],
     destination: CITIES[getRandomInteger(0, CITIES.length - 1)],
-    description: getDescription(descriptionText),
+    // description: getDescription(descriptionText),
     startTime: Math.min(startTime, endTime),
     endTime: Math.max(startTime, endTime),
     price: getRandomInteger(10, 500),
     photos: getPhotos(),
-    offers: offers.slice(0, getRandomInteger(0, 5))
+    offers: offers.slice(0, getRandomInteger(0, 5)),
+    isFavorite: Boolean(getRandomInteger(0, 1))
   };
 };
 

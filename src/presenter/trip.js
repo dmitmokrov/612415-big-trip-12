@@ -1,29 +1,29 @@
 import SortView from '../view/sort.js';
 import DayListView from '../view/day-list.js';
 import DayView from '../view/day.js';
-import EventView from '../view/event.js';
-import EventEditView from '../view/event-edit.js';
 import NoEvent from '../view/no-event.js';
-import {render, RenderPosition, replace} from '../utils/render';
+import EventPresenter from './event.js';
+import {render, RenderPosition} from '../utils/render';
 import {SortType} from '../const.js';
-import {sortByTime, sortByPrice} from '../utils/common.js';
+import {sortByTime, sortByPrice, updateItem} from '../utils/common.js';
 
 export default class Trip {
   constructor(tripContainer) {
     this._tripContainer = tripContainer;
     this._trips = null;
-    this.tripDays = null;
+    this._eventPresenter = {};
 
     this._sortComponent = new SortView();
     this._dayListComponent = new DayListView();
     this._noEventComponent = new NoEvent();
 
-    this._handleSortTypeChange = this._handleSortTypeChange.bind(this); // - new
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
+    this._eventChangeHandler = this._eventChangeHandler.bind(this);
+    this._modeChangeHandler = this._modeChangeHandler.bind(this);
   }
 
   init(trips) {
     this._trips = trips.slice();
-    this._tripDays = [...new Set(this._trips.map((trip) => new Date(trip.startTime).toDateString()))];
 
     if (this._trips.length === 0) {
       this._renderNoEvent();
@@ -33,17 +33,22 @@ export default class Trip {
     }
   }
 
-  _renderEvents(trips = this._trips, isDefaultSorting = true) {
-    this._dayListComponent.getElement().innerHTML = ``;
+  _eventChangeHandler(updatedEvent) {
+    this._trips = updateItem(this._trips, updatedEvent);
+    this._eventPresenter[updatedEvent.id].init(updatedEvent);
+  }
 
-    const days = isDefaultSorting ? this._tripDays : [true];
+  _renderEvents(trips = this._trips, isDefaultSorting = true) {
+    const tripDays = [...new Set(trips.map((trip) => new Date(trip.startTime).toDateString()))];
+    const days = isDefaultSorting ? tripDays : [true];
+
     days.forEach((day, index) => {
       const tripDayComponent = isDefaultSorting ? new DayView(day, index) : new DayView();
       const tripEventList = tripDayComponent.getElement().querySelector(`.trip-events__list`);
 
       trips
         .filter((trip) => isDefaultSorting ? new Date(trip.startTime).toDateString() === day : trip)
-        .forEach((trip) => this._renderEvent(tripEventList, trip));
+        .forEach((event) => this._renderEvent(tripEventList, event));
 
       render(this._dayListComponent, tripDayComponent, RenderPosition.BEFOREEND);
     });
@@ -51,8 +56,10 @@ export default class Trip {
     render(this._tripContainer, this._dayListComponent, RenderPosition.BEFOREEND);
   }
 
-  _handleSortTypeChange(sortType) {
+  _sortTypeChangeHandler(sortType) {
     const trips = this._trips.slice();
+    this._clearEvents();
+
     switch (sortType) {
       case SortType.TIME:
         this._renderEvents(trips.sort(sortByTime), false);
@@ -67,45 +74,24 @@ export default class Trip {
     }
   }
 
+  _modeChangeHandler() {
+    Object.values(this._eventPresenter).forEach((presenter) => presenter.resetView());
+  }
+
   _renderSort() {
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange); // new
+    this._sortComponent.setSortTypeChangeHandler(this._sortTypeChangeHandler);
     render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderEvent(eventList, trip) {
-    const eventComponent = new EventView(trip);
-    const eventEditComponent = new EventEditView(trip);
-
-    const replaceCardToForm = () => {
-      replace(eventEditComponent, eventComponent);
-    };
-
-    const replaceFormToCard = () => {
-      replace(eventComponent, eventEditComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    eventComponent.setClickHandler(() => {
-      replaceCardToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventEditComponent.setFormSubmitHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-    render(eventList, eventComponent, RenderPosition.BEFOREEND);
+  _renderEvent(eventList, event) {
+    const eventPresenter = new EventPresenter(eventList, this._eventChangeHandler, this._modeChangeHandler);
+    eventPresenter.init(event);
+    this._eventPresenter[event.id] = eventPresenter;
   }
 
-  _renderNoEvent() {
-    render(this._tripContainer, new NoEvent(), RenderPosition.BEFOREEND);
+  _clearEvents() {
+    Object.values(this._eventPresenter).forEach((presenter) => presenter.destroy());
+    this._eventPresenter = {};
+    this._dayListComponent.getElement().innerHTML = ``; // для удаления отрисованных дней
   }
 }
