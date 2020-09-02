@@ -8,8 +8,9 @@ import {SortType} from '../const.js';
 import {sortByTime, sortByPrice, updateItem} from '../utils/common.js';
 
 export default class Trip {
-  constructor(tripContainer) {
+  constructor(tripContainer, eventsModel) {
     this._tripContainer = tripContainer;
+    this._eventsModel = eventsModel;
     this._trips = null;
     this._eventPresenter = {};
 
@@ -31,6 +32,8 @@ export default class Trip {
       this._renderSort();
       this._renderEvents();
     }
+
+    console.log(this._eventsModel);
   }
 
   _eventChangeHandler(updatedEvent) {
