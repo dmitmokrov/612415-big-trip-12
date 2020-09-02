@@ -25,6 +25,18 @@ export const Description = {
   PARIS: `Paris is the capital and most populous city of France, with an estimated population of 2,150,271 residents as of 2020, in an area of 105 square kilometres (41 square miles). Since the 17th century, Paris has been one of Europe's major centres of finance, diplomacy, commerce, fashion, science and arts. The City of Paris is the centre and seat of government of the Île-de-France, or Paris Region, which has an estimated official 2020 population of 12,278,210, or about 18 percent of the population of France. The Paris Region had a GDP of €709 billion ($808 billion) in 2017. According to the Economist Intelligence Unit Worldwide Cost of Living Survey in 2018, Paris was the second most expensive city in the world, after Singapore, and ahead of Zürich, Hong Kong, Oslo and Geneva. Another source ranked Paris as most expensive, on a par with Singapore and Hong Kong, in 2018.`
 };
 
+export const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+export const UserAction = {
+  ADD_EVENT: ``,
+  DELETE_EVENT: ``,
+  EDIT_EVENT: ``
+};
+
 // export const Offers = {
 //   'Taxi': [{title: `Order Uber`, price: 20}, {title: `Switch to comfort class`, price: 100}],
 //   'Bus': [{title: `Choose seats`, price: 5}, {title: `Add meal`, price: 15}, {title: `Travel by train`, price: 40}],

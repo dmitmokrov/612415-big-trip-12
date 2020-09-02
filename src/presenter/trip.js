@@ -5,13 +5,14 @@ import NoEvent from '../view/no-event.js';
 import EventPresenter from './event.js';
 import {render, RenderPosition} from '../utils/render';
 import {SortType} from '../const.js';
-import {sortByTime, sortByPrice, updateItem} from '../utils/common.js';
+import {sortByTime, sortByPrice} from '../utils/common.js';
+import {UpdateType, UserAction} from '../const.js';
 
 export default class Trip {
   constructor(tripContainer, eventsModel) {
     this._tripContainer = tripContainer;
     this._eventsModel = eventsModel;
-    this._trips = null;
+
     this._eventPresenter = {};
 
     this._sortComponent = new SortView();
@@ -21,27 +22,50 @@ export default class Trip {
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
     this._eventChangeHandler = this._eventChangeHandler.bind(this);
     this._modeChangeHandler = this._modeChangeHandler.bind(this);
+    this._modelEventsChangeHandler = this._modelEventsChangeHandler.bind(this);
+
+    this._eventsModel.addObserver(this._modelEventsChangeHandler);
   }
 
-  init(trips) {
-    this._trips = trips.slice();
-
-    if (this._trips.length === 0) {
+  init() {
+    if (this._eventsModel.length === 0) {
       this._renderNoEvent();
     } else {
       this._renderSort();
       this._renderEvents();
     }
-
-    console.log(this._eventsModel);
   }
 
-  _eventChangeHandler(updatedEvent) {
-    this._trips = updateItem(this._trips, updatedEvent);
-    this._eventPresenter[updatedEvent.id].init(updatedEvent);
+  _getEvents() {
+    return this._eventsModel.getEvents();
   }
 
-  _renderEvents(trips = this._trips, isDefaultSorting = true) {
+  _modelEventsChangeHandler(updateType, update) {
+    console.log(updateType, update, `modelChangeHandler`);
+    // Здесь выполняются действия после обновления модели
+  }
+
+  _eventChangeHandler(actionType, updateType, update) {
+    // Здесь обновляется модель
+    switch (actionType) {
+      case UserAction.ADD_EVENT:
+        console.log(`add`, updateType, update);
+        break;
+      case UserAction.DELETE_EVENT:
+        console.log(`delete`, updateType, update);
+        break;
+      case UserAction.EDIT_EVENT:
+        console.log(`edit`, updateType, update);
+        break;
+    }
+    // this._eventsModel.updateEvent(update);
+
+    // console.log(this._eventsModel, `eventsModel`);
+
+    // this._eventPresenter[update.id].init(update);
+  }
+
+  _renderEvents(trips = this._getEvents().slice(), isDefaultSorting = true) {
     const tripDays = [...new Set(trips.map((trip) => new Date(trip.startTime).toDateString()))];
     const days = isDefaultSorting ? tripDays : [true];
 
@@ -60,7 +84,7 @@ export default class Trip {
   }
 
   _sortTypeChangeHandler(sortType) {
-    const trips = this._trips.slice();
+    const trips = this._getEvents().slice();
     this._clearEvents();
 
     switch (sortType) {

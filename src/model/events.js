@@ -14,17 +14,36 @@ export default class Events extends Observer {
     this._events = events;
   }
 
-  updateEvent(updatedEvent) {
-    const index = this._events.findIndex((event) => event.id === updatedEvent.id);
+  updateEvent(updateType, update) {
+    const index = this._events.findIndex((event) => event.id === update.id);
 
     if (index === -1) {
-      throw new Error(`Can't update unexistable event`);
+      throw new Error(`Can't update unexisting event`);
     }
 
     this._events = [
       ...this._events.slice(0, index),
-      updatedEvent,
+      update,
       ...this._events.slice(index + 1)
     ];
+
+    this.notify(updateType, update);
+  }
+
+  addEvent(updateType, update) {
+    this._events = [update, ...this._events];
+
+    this.notify(updateType, update);
+  }
+
+  deleteEvent(updateType, update) {
+    const index = this._events.findIndex((event) => event.id === update.id);
+
+    this._events = [
+      ...this._events.slice(0, index),
+      ...this._events.slice(index + 1)
+    ];
+
+    this.notify(updateType);
   }
 }

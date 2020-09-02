@@ -23,4 +23,4 @@ render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN); // Отр
 render(tripMainControlsElement, new MenuView(), RenderPosition.AFTERBEGIN); // Отрисовка меню
 render(tripMainControlsElement, new FilterView(), RenderPosition.BEFOREEND); // Отрисовка фильтров
 
-tripPresenter.init(trips);
+tripPresenter.init();
