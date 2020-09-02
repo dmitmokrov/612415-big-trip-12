@@ -43,6 +43,12 @@ export default class Trip {
   _modelEventsChangeHandler(updateType, update) {
     console.log(updateType, update, `modelChangeHandler`);
     // Здесь выполняются действия после обновления модели
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._eventPresenter[update.id].init(update);
+        console.log(`edit`);
+        break;
+    }
   }
 
   _eventChangeHandler(actionType, updateType, update) {
@@ -55,7 +61,8 @@ export default class Trip {
         console.log(`delete`, updateType, update);
         break;
       case UserAction.EDIT_EVENT:
-        console.log(`edit`, updateType, update);
+        console.log(`edit`, update);
+        this._eventsModel.updateEvent(updateType, update);
         break;
     }
     // this._eventsModel.updateEvent(update);

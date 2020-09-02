@@ -1,6 +1,7 @@
 import EventView from '../view/event.js';
 import EventEditView from '../view/event-edit.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
+import {UpdateType, UserAction} from '../const.js';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -87,7 +88,8 @@ export default class Event {
   }
 
   _formSubmitHandler(event) {
-    this._changeData(event);
+    console.log(event);
+    this._changeData(UserAction.EDIT_EVENT, UpdateType.PATCH, event);
     this._replaceFormToCard();
   }
 }

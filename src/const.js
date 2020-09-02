@@ -32,9 +32,9 @@ export const UpdateType = {
 };
 
 export const UserAction = {
-  ADD_EVENT: ``,
-  DELETE_EVENT: ``,
-  EDIT_EVENT: ``
+  ADD_EVENT: `ADD_EVENT`,
+  DELETE_EVENT: `DELETE_EVENT`,
+  EDIT_EVENT: `EDIT_EVENT`
 };
 
 // export const Offers = {

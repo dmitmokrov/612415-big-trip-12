@@ -11,7 +11,7 @@ export default class Observer {
     this._observers = this._observers.filter((observer) => observer !== removableObserver);
   }
 
-  notify(data) {
-    this._observers.forEach((observer) => observer(data));
+  notify(updateType, update) {
+    this._observers.forEach((observer) => observer(updateType, update));
   }
 }
