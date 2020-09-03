@@ -6,12 +6,13 @@ import EventPresenter from './event.js';
 import {render, RenderPosition} from '../utils/render';
 import {SortType} from '../const.js';
 import {sortByTime, sortByPrice} from '../utils/common.js';
-import {UpdateType, UserAction} from '../const.js';
+import {UpdateType, UserAction, filter} from '../const.js';
 
 export default class Trip {
-  constructor(tripContainer, eventsModel) {
+  constructor(tripContainer, eventsModel, filterModel) {
     this._tripContainer = tripContainer;
     this._eventsModel = eventsModel;
+    this._filterModel = filterModel;
     this._currentSortType = SortType.DEFAULT;
 
     this._eventPresenter = {};
@@ -24,8 +25,10 @@ export default class Trip {
     this._eventChangeHandler = this._eventChangeHandler.bind(this);
     this._modeChangeHandler = this._modeChangeHandler.bind(this);
     this._modelEventsChangeHandler = this._modelEventsChangeHandler.bind(this);
+    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
 
     this._eventsModel.addObserver(this._modelEventsChangeHandler);
+    this._filterModel.addObserver(this._modelEventsChangeHandler);
   }
 
   init() {
@@ -38,14 +41,18 @@ export default class Trip {
   }
 
   _getEvents() {
+    const filterType = this._filterModel.getFilter().toUpperCase();
+    const events = this._eventsModel.getEvents();
+    const filteredEvents = filter[filterType](events);
+
     switch (this._currentSortType) {
       case SortType.TIME:
-        return this._eventsModel.getEvents().slice().sort(sortByTime);
+        return filteredEvents.sort(sortByTime);
       case SortType.PRICE:
-        return this._eventsModel.getEvents().slice().sort(sortByPrice);
+        return filteredEvents.sort(sortByPrice);
     }
 
-    return this._eventsModel.getEvents();
+    return filteredEvents;
   }
 
   _modelEventsChangeHandler(updateType, update) {
@@ -54,15 +61,19 @@ export default class Trip {
       case UpdateType.PATCH:
         this._eventPresenter[update.id].init(update);
         break;
-      case UpdateType.MINOR:
-        // console.log(`minor update`);
+      // case UpdateType.MINOR:
+      //   this._clearEvents();
+      //   this._renderEvents();
+      //   break;
+      case UpdateType.MAJOR:
         this._clearEvents();
         this._renderEvents();
         break;
-      case UpdateType.MAJOR:
-        // console.log(`major update`);
-        break;
     }
+  }
+
+  _filterTypeChangeHandler(filterType) {
+    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
   }
 
   _eventChangeHandler(actionType, updateType, update) {

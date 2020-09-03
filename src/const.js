@@ -37,15 +37,14 @@ export const UserAction = {
   EDIT_EVENT: `EDIT_EVENT`
 };
 
-// export const Offers = {
-//   'Taxi': [{title: `Order Uber`, price: 20}, {title: `Switch to comfort class`, price: 100}],
-//   'Bus': [{title: `Choose seats`, price: 5}, {title: `Add meal`, price: 15}, {title: `Travel by train`, price: 40}],
-//   'Train': [],
-//   'Ship': [{title: `Add meal`, price: 15}, {title: `Switch to comfort class`, price: 100}],
-//   'Transport': [],
-//   'Drive': [],
-//   'Flight': [{title: `Order Uber`, price: 20}, {title: `Switch to comfort class`, price: 100}],
-//   'Check-in': [{title: `Choose seats`, price: 5}, {title: `Travel by train`, price: 40}],
-//   'Sightseeing': [],
-//   'Restaurant': [{title: `Order Uber`, price: 20}, {title: `Switch to comfort class`, price: 100}]
-// };
+export const FilterType = {
+  EVERYTHING: `EVERYTHING`,
+  FUTURE: `FUTURE`,
+  PAST: `PAST`
+};
+
+export const filter = {
+  [FilterType.EVERYTHING]: (events) => events,
+  [FilterType.FUTURE]: (events) => events.filter((event) => event.startTime > Date.now()),
+  [FilterType.PAST]: (events) => events.filter((event) => event.endTime < Date.now())
+};

@@ -90,7 +90,7 @@ export default class Event {
   }
 
   _deleteClickHandler(event) {
-    this._changeData(UserAction.DELETE_EVENT, UpdateType.MINOR, event);
+    this._changeData(UserAction.DELETE_EVENT, UpdateType.MAJOR, event);
   }
 
   _formSubmitHandler(event) {

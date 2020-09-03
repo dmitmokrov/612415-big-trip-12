@@ -59,7 +59,7 @@ const offers = [
   }
 ];
 
-const getRandomDate = () => Date.now() + Math.floor(Math.random() * 7 * 24 * getRandomInteger(0, 60) * 60 * 1000);
+const getRandomDate = () => Date.now() + Math.floor(Math.random() * 7 * 24 * getRandomInteger(0, 60) * 60 * 1000 - 100000000);
 // const getDescription = (arr) => {
 //   return arr.slice(0, getRandomInteger(1, arr.length - 1)).join(``);
 // };
