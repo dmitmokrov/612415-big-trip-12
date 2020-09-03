@@ -12,6 +12,7 @@ export default class Trip {
   constructor(tripContainer, eventsModel) {
     this._tripContainer = tripContainer;
     this._eventsModel = eventsModel;
+    this._currentSortType = SortType.DEFAULT;
 
     this._eventPresenter = {};
 
@@ -37,6 +38,13 @@ export default class Trip {
   }
 
   _getEvents() {
+    switch (this._currentSortType) {
+      case SortType.TIME:
+        return this._eventsModel.getEvents().slice().sort(sortByTime);
+      case SortType.PRICE:
+        return this._eventsModel.getEvents().slice().sort(sortByPrice);
+    }
+
     return this._eventsModel.getEvents();
   }
 
@@ -72,7 +80,8 @@ export default class Trip {
     }
   }
 
-  _renderEvents(trips = this._getEvents().slice(), isDefaultSorting = true) {
+  _renderEvents(trips = this._getEvents().slice()) {
+    const isDefaultSorting = this._currentSortType === SortType.DEFAULT;
     const tripDays = [...new Set(trips.map((trip) => new Date(trip.startTime).toDateString()))];
     const days = isDefaultSorting ? tripDays : [true];
 
@@ -91,21 +100,9 @@ export default class Trip {
   }
 
   _sortTypeChangeHandler(sortType) {
-    const trips = this._getEvents().slice();
+    this._currentSortType = sortType;
     this._clearEvents();
-
-    switch (sortType) {
-      case SortType.TIME:
-        this._renderEvents(trips.sort(sortByTime), false);
-        break;
-
-      case SortType.PRICE:
-        this._renderEvents(trips.sort(sortByPrice), false);
-        break;
-
-      default:
-        this._renderEvents();
-    }
+    this._renderEvents();
   }
 
   _modeChangeHandler() {
