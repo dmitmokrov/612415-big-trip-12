@@ -15,7 +15,6 @@ export default class Events extends Observer {
   }
 
   updateEvent(updateType, update) {
-    console.log(`updateEvent`, updateType, update);
     const index = this._events.findIndex((event) => event.id === update.id);
 
     if (index === -1) {
@@ -28,13 +27,13 @@ export default class Events extends Observer {
       ...this._events.slice(index + 1)
     ];
 
-    this.notify(updateType, update);
+    this._notify(updateType, update);
   }
 
   addEvent(updateType, update) {
     this._events = [update, ...this._events];
 
-    this.notify(updateType, update);
+    this._notify(updateType, update);
   }
 
   deleteEvent(updateType, update) {
@@ -45,6 +44,6 @@ export default class Events extends Observer {
       ...this._events.slice(index + 1)
     ];
 
-    this.notify(updateType);
+    this._notify(updateType);
   }
 }

@@ -179,9 +179,11 @@ export default class EventEdit extends SmartView {
     this._trip = trip;
     this._datepicker = null;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
     this._typeChangeHandler = this._typeChangeHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
     this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
 
@@ -197,6 +199,12 @@ export default class EventEdit extends SmartView {
     this._setInnerHandlers();
     this._setDatePickers();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
   }
 
   setFormSubmitHandler(callback) {
@@ -212,6 +220,7 @@ export default class EventEdit extends SmartView {
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._favoriteChangeHandler);
     this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeChangeHandler);
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._destinationChangeHandler);
+    this.getElement().querySelector(`.event__input--price`).addEventListener(`change`, this._priceChangeHandler);
   }
 
   _setDatePickers() {
@@ -242,6 +251,11 @@ export default class EventEdit extends SmartView {
     });
   }
 
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(this._trip);
+  }
+
   _formSubmitHandler(evt) {
     evt.preventDefault();
     this._callback.formSubmit(this._trip);
@@ -260,6 +274,11 @@ export default class EventEdit extends SmartView {
   _destinationChangeHandler(evt) {
     evt.preventDefault();
     this.updateData({destination: evt.target.value});
+  }
+
+  _priceChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({price: evt.target.value});
   }
 
   _startTimeChangeHandler([userDate]) {

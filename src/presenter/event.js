@@ -20,6 +20,7 @@ export default class Event {
 
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._eventClickHandler = this._eventClickHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
@@ -33,6 +34,7 @@ export default class Event {
 
     this._eventComponent.setClickHandler(this._eventClickHandler);
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
+    this._eventEditComponent.setDeleteClickHandler(this._deleteClickHandler);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventList, this._eventComponent, RenderPosition.BEFOREEND);
@@ -87,8 +89,11 @@ export default class Event {
     this._replaceCardToForm();
   }
 
+  _deleteClickHandler(event) {
+    this._changeData(UserAction.DELETE_EVENT, UpdateType.MINOR, event);
+  }
+
   _formSubmitHandler(event) {
-    console.log(event);
     this._changeData(UserAction.EDIT_EVENT, UpdateType.PATCH, event);
     this._replaceFormToCard();
   }

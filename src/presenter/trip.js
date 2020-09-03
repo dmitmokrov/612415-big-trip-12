@@ -41,12 +41,18 @@ export default class Trip {
   }
 
   _modelEventsChangeHandler(updateType, update) {
-    console.log(updateType, update, `modelChangeHandler`);
     // Здесь выполняются действия после обновления модели
     switch (updateType) {
       case UpdateType.PATCH:
         this._eventPresenter[update.id].init(update);
-        console.log(`edit`);
+        break;
+      case UpdateType.MINOR:
+        // console.log(`minor update`);
+        this._clearEvents();
+        this._renderEvents();
+        break;
+      case UpdateType.MAJOR:
+        // console.log(`major update`);
         break;
     }
   }
@@ -55,21 +61,15 @@ export default class Trip {
     // Здесь обновляется модель
     switch (actionType) {
       case UserAction.ADD_EVENT:
-        console.log(`add`, updateType, update);
+        this._eventsModel.addEvent(updateType, update);
         break;
       case UserAction.DELETE_EVENT:
-        console.log(`delete`, updateType, update);
+        this._eventsModel.deleteEvent(updateType, update);
         break;
       case UserAction.EDIT_EVENT:
-        console.log(`edit`, update);
         this._eventsModel.updateEvent(updateType, update);
         break;
     }
-    // this._eventsModel.updateEvent(update);
-
-    // console.log(this._eventsModel, `eventsModel`);
-
-    // this._eventPresenter[update.id].init(update);
   }
 
   _renderEvents(trips = this._getEvents().slice(), isDefaultSorting = true) {
