@@ -4,7 +4,7 @@ import DayView from '../view/day.js';
 import NoEvent from '../view/no-event.js';
 import EventPresenter from './event.js';
 import EventNewPresenter from './event-new.js';
-import {render, RenderPosition} from '../utils/render';
+import {render, RenderPosition, replace} from '../utils/render';
 import {SortType} from '../const.js';
 import {sortByTime, sortByPrice, sortByStartTime} from '../utils/common.js';
 import {UpdateType, UserAction, filter, FilterType} from '../const.js';
@@ -18,7 +18,7 @@ export default class Trip {
 
     this._eventPresenter = {};
 
-    this._sortComponent = new SortView();
+    this._sortComponent = null;
     this._dayListComponent = new DayListView();
     this._noEventComponent = new NoEvent();
 
@@ -75,6 +75,7 @@ export default class Trip {
       //   this._renderEvents();
       //   break;
       case UpdateType.MAJOR:
+        this._renderSort();
         this._clearEvents();
         this._renderEvents();
         break;
@@ -131,8 +132,16 @@ export default class Trip {
   }
 
   _renderSort() {
+    const prevSortComponent = this._sortComponent;
+    this._sortComponent = new SortView(Object.values(SortType), this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._sortTypeChangeHandler);
-    render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
+
+    if (prevSortComponent === null) {
+      render(this._tripContainer, this._sortComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
+    replace(this._sortComponent, prevSortComponent);
   }
 
   _renderEvent(eventList, event) {

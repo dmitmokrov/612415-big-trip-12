@@ -12,7 +12,7 @@ export const preposition = {
 };
 
 export const SortType = {
-  DEFAULT: `default`,
+  DEFAULT: `event`,
   TIME: `time`,
   PRICE: `price`
 };
