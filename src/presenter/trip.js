@@ -3,10 +3,11 @@ import DayListView from '../view/day-list.js';
 import DayView from '../view/day.js';
 import NoEvent from '../view/no-event.js';
 import EventPresenter from './event.js';
+import EventNewPresenter from './event-new.js';
 import {render, RenderPosition} from '../utils/render';
 import {SortType} from '../const.js';
 import {sortByTime, sortByPrice, sortByStartTime} from '../utils/common.js';
-import {UpdateType, UserAction, filter} from '../const.js';
+import {UpdateType, UserAction, filter, FilterType} from '../const.js';
 
 export default class Trip {
   constructor(tripContainer, eventsModel, filterModel) {
@@ -29,6 +30,8 @@ export default class Trip {
 
     this._eventsModel.addObserver(this._modelEventsChangeHandler);
     this._filterModel.addObserver(this._modelEventsChangeHandler);
+
+    this._eventNewPresenter = new EventNewPresenter(this._dayListComponent, this._eventChangeHandler);
   }
 
   init() {
@@ -38,6 +41,12 @@ export default class Trip {
       this._renderSort();
       this._renderEvents();
     }
+  }
+
+  createEvent() {
+    this._currentSortType = SortType.DEFAULT;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._eventNewPresenter.init();
   }
 
   _getEvents() {
@@ -117,6 +126,7 @@ export default class Trip {
   }
 
   _modeChangeHandler() {
+    this._eventNewPresenter.destroy();
     Object.values(this._eventPresenter).forEach((presenter) => presenter.resetView());
   }
 
@@ -132,6 +142,7 @@ export default class Trip {
   }
 
   _clearEvents() {
+    this._eventNewPresenter.destroy();
     Object.values(this._eventPresenter).forEach((presenter) => presenter.destroy());
     this._eventPresenter = {};
     this._dayListComponent.getElement().innerHTML = ``; // для удаления отрисованных дней

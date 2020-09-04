@@ -48,3 +48,9 @@ export const filter = {
   [FilterType.FUTURE]: (events) => events.filter((event) => event.startTime > Date.now()),
   [FilterType.PAST]: (events) => events.filter((event) => event.endTime < Date.now())
 };
+
+export const datePickerOptions = {
+  enableTime: true,
+  dateFormat: `d/m/y H:i`,
+  // time_24hr: true,
+};

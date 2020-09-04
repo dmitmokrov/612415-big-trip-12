@@ -1,9 +1,21 @@
 import SmartView from './smart.js';
 import {getFormatEditTime, getFormatText} from '../utils/common.js';
-import {preposition, Description} from '../const.js';
+import {preposition, Description, datePickerOptions} from '../const.js';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+
+const BLANK_TRIP = {
+  type: `Bus`,
+  destination: `London`,
+  // description: getDescription(descriptionText),
+  startTime: Date.now(),
+  endTime: Date.now(),
+  price: 100,
+  photos: [],
+  offers: [],
+  isFavorite: false
+};
 
 const createOffer = (offer) => {
   const {title, price, isChecked} = offer;
@@ -174,7 +186,7 @@ const createEventEditElement = (trip) => {
 };
 
 export default class EventEdit extends SmartView {
-  constructor(trip) {
+  constructor(trip = BLANK_TRIP) {
     super();
     this._trip = trip;
     this._datepicker = null;
@@ -234,21 +246,9 @@ export default class EventEdit extends SmartView {
       this._endDatepicker = null;
     }
 
-    this._startDatepicker = flatpickr(this.getElement().querySelector(`input[name="event-start-time"]`), {
-      enableTime: true,
-      dateFormat: `d/m/y H:i`,
-      // time_24hr: true,
-      defaultDate: this._trip.startTime,
-      onClose: this._startTimeChangeHandler
-    });
+    this._startDatepicker = flatpickr(this.getElement().querySelector(`input[name="event-start-time"]`), Object.assign({}, datePickerOptions, {defaultDate: this._trip.startTime, onClose: this._startTimeChangeHandler}));
 
-    this._endDatepicker = flatpickr(this.getElement().querySelector(`input[name="event-end-time"]`), {
-      enableTime: true,
-      dateFormat: `d/m/y H:i`,
-      // time_24hr: true,
-      defaultDate: this._trip.endTime,
-      onClose: this._endTimeChangeHandler
-    });
+    this._endDatepicker = flatpickr(this.getElement().querySelector(`input[name="event-end-time"]`), Object.assign({}, datePickerOptions, {defaultDate: this._trip.endTime, onClose: this._endTimeChangeHandler}));
   }
 
   _formDeleteClickHandler(evt) {

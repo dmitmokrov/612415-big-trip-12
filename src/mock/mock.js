@@ -65,7 +65,7 @@ const getRandomDate = () => Date.now() + Math.floor(Math.random() * 7 * 24 * get
 // };
 const getPhotos = () => new Array(getRandomInteger(1, 5)).fill().map(() => `http://picsum.photos/248/152?r=${Math.random()}`);
 
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const createTrip = () => {
   const startTime = getRandomDate();

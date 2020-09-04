@@ -27,3 +27,8 @@ render(tripMainControlsElement, new MenuView(), RenderPosition.AFTERBEGIN); // Ğ
 
 filterPresenter.init();
 tripPresenter.init();
+
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripPresenter.createEvent();
+});
