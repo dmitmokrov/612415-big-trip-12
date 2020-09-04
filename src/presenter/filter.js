@@ -1,6 +1,6 @@
 import FilterView from '../view/filter.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
-import {UpdateType} from '../const.js';
+import {UpdateType, FilterType} from '../const.js';
 
 export default class Filter {
   constructor(filterContainer, filterModel, eventsModel) {
@@ -37,7 +37,7 @@ export default class Filter {
   }
 
   _getFilters() {
-    return [`everything`, `future`, `past`];
+    return [FilterType.EVERYTHING, FilterType.FUTURE, FilterType.PAST];
   }
 
   _filterTypeChangeHandler(filterType) {

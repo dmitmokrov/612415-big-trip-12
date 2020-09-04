@@ -5,7 +5,7 @@ import NoEvent from '../view/no-event.js';
 import EventPresenter from './event.js';
 import {render, RenderPosition} from '../utils/render';
 import {SortType} from '../const.js';
-import {sortByTime, sortByPrice} from '../utils/common.js';
+import {sortByTime, sortByPrice, sortByStartTime} from '../utils/common.js';
 import {UpdateType, UserAction, filter} from '../const.js';
 
 export default class Trip {
@@ -41,7 +41,7 @@ export default class Trip {
   }
 
   _getEvents() {
-    const filterType = this._filterModel.getFilter().toUpperCase();
+    const filterType = this._filterModel.getFilter();
     const events = this._eventsModel.getEvents();
     const filteredEvents = filter[filterType](events);
 
@@ -52,7 +52,7 @@ export default class Trip {
         return filteredEvents.sort(sortByPrice);
     }
 
-    return filteredEvents;
+    return filteredEvents.sort(sortByStartTime);
   }
 
   _modelEventsChangeHandler(updateType, update) {

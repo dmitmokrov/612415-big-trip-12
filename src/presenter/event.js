@@ -2,6 +2,7 @@ import EventView from '../view/event.js';
 import EventEditView from '../view/event-edit.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
 import {UpdateType, UserAction} from '../const.js';
+import {isDatesEqual} from '../utils/common.js';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -93,8 +94,9 @@ export default class Event {
     this._changeData(UserAction.DELETE_EVENT, UpdateType.MAJOR, event);
   }
 
-  _formSubmitHandler(event) {
-    this._changeData(UserAction.EDIT_EVENT, UpdateType.PATCH, event);
+  _formSubmitHandler(update) {
+    const isMajorUpdate = !isDatesEqual(this._event.startTime, update.startTime) || !isDatesEqual(this._event.endTime, update.endTime);
+    this._changeData(UserAction.EDIT_EVENT, isMajorUpdate ? UpdateType.MAJOR : UpdateType.PATCH, update);
     this._replaceFormToCard();
   }
 }
