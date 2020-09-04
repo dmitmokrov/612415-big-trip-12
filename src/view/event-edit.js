@@ -2,12 +2,13 @@ import SmartView from './smart.js';
 import {getFormatEditTime, getFormatText} from '../utils/common.js';
 import {preposition, Description, datePickerOptions} from '../const.js';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const BLANK_TRIP = {
   type: `Bus`,
-  destination: `London`,
+  destination: ``,
   // description: getDescription(descriptionText),
   startTime: Date.now(),
   endTime: Date.now(),
@@ -116,7 +117,7 @@ const createEventEditElement = (trip) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type} ${prep}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination)}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -143,7 +144,7 @@ const createEventEditElement = (trip) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -171,7 +172,7 @@ const createEventEditElement = (trip) => {
           </div>
         </section>
         <section class="event__section  event__section--destination">
-                <h3 class="event__section-title  event__section-title--destination">${destination}</h3>
+                <h3 class="event__section-title  event__section-title--destination">${he.encode(destination)}</h3>
                 <p class="event__destination-description">${description}</p>
 
                 <div class="event__photos-container">
