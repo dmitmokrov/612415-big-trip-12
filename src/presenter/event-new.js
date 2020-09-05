@@ -21,7 +21,7 @@ export default class EventNew {
       return;
     }
 
-    this._eventEditComponent = new EventEditView();
+    this._eventEditComponent = new EventEditView(undefined, true);
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
     this._eventEditComponent.setDeleteClickHandler(this._deleteClickHandler);
 
