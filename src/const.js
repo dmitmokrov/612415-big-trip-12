@@ -10,6 +10,11 @@ export const BLANK_EVENT = {
   isFavorite: false
 };
 
+export const MenuItem = {
+  TABLE: `TABLE`,
+  STATS: `STATS`
+};
+
 export const preposition = {
   'Check-in': `in`,
   'Sightseeing': `in`,
