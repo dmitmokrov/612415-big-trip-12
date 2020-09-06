@@ -1,22 +1,10 @@
 import SmartView from './smart.js';
 import {getFormatEditTime, getFormatText} from '../utils/common.js';
-import {preposition, Description, datePickerOptions} from '../const.js';
+import {preposition, Description, datePickerOptions, EventEditMode} from '../const.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-
-const BLANK_TRIP = {
-  type: `Bus`,
-  destination: ``,
-  // description: getDescription(descriptionText),
-  startTime: Date.now(),
-  endTime: Date.now(),
-  price: 100,
-  photos: [],
-  offers: [],
-  isFavorite: false
-};
 
 const createOffer = (offer) => {
   const {title, price, isChecked} = offer;
@@ -33,7 +21,7 @@ const createOffer = (offer) => {
 
 const createPhoto = (photo) => `<img class="event__photo" src="${photo}" alt="Event photo"></img>`;
 
-const createEventEditElement = (trip, isNewEvent) => {
+const createEventEditElement = (trip, mode) => {
   const {type, destination, startTime, endTime, price, offers, photos, isFavorite} = trip;
   const description = Description[destination.toUpperCase()] || ``;
   const prep = preposition[type];
@@ -148,9 +136,9 @@ const createEventEditElement = (trip, isNewEvent) => {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${isNewEvent ? `Cancel` : `Delete`}</button>
+        <button class="event__reset-btn" type="reset">${mode === EventEditMode.ADD_EVENT ? `Cancel` : `Delete`}</button>
 
-        ${isNewEvent ? `` : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
+        ${mode === EventEditMode.ADD_EVENT ? `` : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -158,7 +146,7 @@ const createEventEditElement = (trip, isNewEvent) => {
             </svg>
           </label>`}
 
-        ${isNewEvent ? `` : `<button class="event__rollup-btn" type="button">
+        ${mode === EventEditMode.ADD_EVENT ? `` : `<button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>`}
       </header>
@@ -172,26 +160,26 @@ const createEventEditElement = (trip, isNewEvent) => {
           </div>
         </section>` : ``}
 
-        <section class="event__section  event__section--destination">
-                <h3 class="event__section-title  event__section-title--destination">${he.encode(destination)}</h3>
-                <p class="event__destination-description">${description}</p>
+        ${destination ? `<section class="event__section  event__section--destination">
+          <h3 class="event__section-title  event__section-title--destination">${he.encode(destination)}</h3>
+          <p class="event__destination-description">${description}</p>
 
-                <div class="event__photos-container">
-                  <div class="event__photos-tape">
-                    ${photosElement}
-                  </div>
-                </div>
-              </section>
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+              ${photosElement}
+            </div>
+          </div>
+        </section>` : ``}
       </section>
     </form>
   </li>`;
 };
 
 export default class EventEdit extends SmartView {
-  constructor(trip = BLANK_TRIP, isNewEvent = false) {
+  constructor(trip, mode) {
     super();
     this._trip = trip;
-    this._isNewEvent = isNewEvent;
+    this._mode = mode;
     this._datepicker = null;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
@@ -207,7 +195,7 @@ export default class EventEdit extends SmartView {
   }
 
   getTemplate() {
-    return createEventEditElement(this._trip, this._isNewEvent);
+    return createEventEditElement(this._trip, this._mode);
   }
 
   restoreHandlers() {
@@ -232,7 +220,7 @@ export default class EventEdit extends SmartView {
   }
 
   _setInnerHandlers() {
-    if (!this._isNewEvent) {
+    if (this._mode !== EventEditMode.ADD_EVENT) {
       this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._favoriteChangeHandler);
     }
     this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeChangeHandler);

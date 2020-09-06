@@ -1,6 +1,6 @@
 import EventEditView from '../view/event-edit.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
-import {UpdateType, UserAction} from '../const.js';
+import {UpdateType, UserAction, EventEditMode, BLANK_EVENT} from '../const.js';
 import {generateId} from '../mock/mock.js';
 
 export default class EventNew {
@@ -21,7 +21,7 @@ export default class EventNew {
       return;
     }
 
-    this._eventEditComponent = new EventEditView(undefined, true);
+    this._eventEditComponent = new EventEditView(BLANK_EVENT, EventEditMode.ADD_EVENT);
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
     this._eventEditComponent.setDeleteClickHandler(this._deleteClickHandler);
 

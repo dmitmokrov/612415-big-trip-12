@@ -1,3 +1,15 @@
+export const BLANK_EVENT = {
+  type: `Bus`,
+  destination: ``,
+  // description: getDescription(descriptionText),
+  startTime: Date.now(),
+  endTime: Date.now(),
+  price: 100,
+  photos: [],
+  offers: [],
+  isFavorite: false
+};
+
 export const preposition = {
   'Check-in': `in`,
   'Sightseeing': `in`,
@@ -41,6 +53,11 @@ export const FilterType = {
   EVERYTHING: `EVERYTHING`,
   FUTURE: `FUTURE`,
   PAST: `PAST`
+};
+
+export const EventEditMode = {
+  EDIT_EVENT: `EDIT_EVENT`,
+  ADD_EVENT: `ADD_EVENT`
 };
 
 export const filter = {
