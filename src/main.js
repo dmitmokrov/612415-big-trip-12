@@ -16,7 +16,6 @@ const tripMainControlsElement = tripMainElement.querySelector(`.trip-main__trip-
 const tripEventsElement = bodyElement.querySelector(`.trip-events`);
 
 const menuComponent = new MenuView();
-const statsComponent = new StatsView();
 const eventsModel = new EventsModel();
 eventsModel.setEvents(trips);
 const filterModel = new FilterModel();
@@ -29,6 +28,8 @@ render(tripInfoComponent, new TripCostView(eventsModel.getEvents()), RenderPosit
 render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
 render(tripMainControlsElement, menuComponent, RenderPosition.AFTERBEGIN);
 
+let statsComponent = null;
+
 const menuClickHandler = (menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
@@ -37,6 +38,7 @@ const menuClickHandler = (menuItem) => {
       break;
     case MenuItem.STATS:
       tripPresenter.destroy();
+      statsComponent = new StatsView(eventsModel.getEvents());
       render(tripEventsElement, statsComponent, RenderPosition.BEFOREEND);
       break;
   }
