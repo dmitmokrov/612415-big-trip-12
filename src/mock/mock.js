@@ -59,13 +59,13 @@ const offers = [
   }
 ];
 
-const getRandomDate = () => Date.now() + Math.floor(Math.random() * 7 * 24 * getRandomInteger(0, 60) * 60 * 1000);
+const getRandomDate = () => Date.now() + Math.floor(Math.random() * 7 * 24 * getRandomInteger(0, 60) * 60 * 1000 - 100000000);
 // const getDescription = (arr) => {
 //   return arr.slice(0, getRandomInteger(1, arr.length - 1)).join(``);
 // };
 const getPhotos = () => new Array(getRandomInteger(1, 5)).fill().map(() => `http://picsum.photos/248/152?r=${Math.random()}`);
 
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const createTrip = () => {
   const startTime = getRandomDate();
