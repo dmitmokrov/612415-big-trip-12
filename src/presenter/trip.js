@@ -4,7 +4,7 @@ import DayView from '../view/day.js';
 import NoEvent from '../view/no-event.js';
 import EventPresenter from './event.js';
 import EventNewPresenter from './event-new.js';
-import {render, RenderPosition, replace} from '../utils/render';
+import {render, RenderPosition, replace, remove} from '../utils/render';
 import {SortType} from '../const.js';
 import {sortByTime, sortByPrice, sortByStartTime} from '../utils/common.js';
 import {UpdateType, UserAction, filter, FilterType} from '../const.js';
@@ -28,9 +28,6 @@ export default class Trip {
     this._modelEventsChangeHandler = this._modelEventsChangeHandler.bind(this);
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
 
-    this._eventsModel.addObserver(this._modelEventsChangeHandler);
-    this._filterModel.addObserver(this._modelEventsChangeHandler);
-
     this._eventNewPresenter = new EventNewPresenter(this._dayListComponent, this._eventChangeHandler);
   }
 
@@ -38,9 +35,21 @@ export default class Trip {
     if (this._eventsModel.length === 0) {
       this._renderNoEvent();
     } else {
+      this._currentSortType = SortType.DEFAULT;
+      this._eventsModel.addObserver(this._modelEventsChangeHandler);
+      this._filterModel.addObserver(this._modelEventsChangeHandler);
+
       this._renderSort();
       this._renderEvents();
     }
+  }
+
+  destroy() {
+    this._clearEvents();
+    this._clearSort();
+
+    this._eventsModel.removeObserver(this._modelEventsChangeHandler);
+    this._filterModel.removeObserver(this._modelEventsChangeHandler);
   }
 
   createEvent() {
@@ -142,6 +151,13 @@ export default class Trip {
     }
 
     replace(this._sortComponent, prevSortComponent);
+  }
+
+  _clearSort() {
+    if (this._sortComponent !== null) {
+      remove(this._sortComponent);
+    }
+    this._sortComponent = null;
   }
 
   _renderEvent(eventList, event) {
