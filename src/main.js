@@ -9,6 +9,16 @@ import FilterModel from './model/filter.js';
 import {trips} from './mock/mock.js';
 import {MenuItem} from './const.js';
 import {render, RenderPosition, remove} from './utils/render.js';
+import Api from './api.js';
+
+const AUTHORIZATION = `Basic jsdgerovgridfgmkjueyio`;
+const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
+
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getEvents().then((events) => {
+  console.log(events);
+});
 
 const bodyElement = document.querySelector(`.page-body`);
 const tripMainElement = bodyElement.querySelector(`.trip-main`);

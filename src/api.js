@@ -19,15 +19,31 @@ export default class Api {
     .then(Api.toJSON);
   }
 
-  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+  updateEvent(event) {
+    return this._load({
+      url: `points/${event.id}`,
+      method: Method.PUT,
+      body: JSON.stringify(event),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+    .then(Api.toJSON);
+  }
+
+  _load({
+    url,
+    method = Method.GET,
+    body = null,
+    headers = new Headers()
+  }) {
     headers.append(`Authorization`, this._authorization);
+
     return fetch(`${this._endpoint}/${url}`, {method, body, headers})
-    .then(Api.checkStatus())
-    .then(Api.catchError());
+    .then(Api.checkStatus)
+    .catch(Api.catchError);
   }
 
   static checkStatus(response) {
-    if (response.status < SuccessHttpStatusRange.MIN && response.status > SuccessHttpStatusRange.MAX) {
+    if (response.status < SuccessHttpStatusRange.MIN || response.status > SuccessHttpStatusRange.MAX) {
       throw new Error(`${response.status}: ${response.statusText}`);
     }
 
