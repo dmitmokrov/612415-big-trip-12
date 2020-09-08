@@ -1,6 +1,6 @@
 import SmartView from './smart.js';
 import {getFormatEditTime, getFormatText} from '../utils/common.js';
-import {preposition, Description, datePickerOptions, EventEditMode} from '../const.js';
+import {Preposition, datePickerOptions, EventEditMode} from '../const.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
 
@@ -19,16 +19,17 @@ const createOffer = (offer) => {
   </div>`;
 };
 
-const createPhoto = (photo) => `<img class="event__photo" src="${photo}" alt="Event photo"></img>`;
+const createPhoto = (src, description) => `<img class="event__photo" src="${src}" alt="${description}">`;
 
 const createEventEditElement = (trip, mode) => {
-  const {type, destination, startTime, endTime, price, offers, photos, isFavorite} = trip;
-  const description = Description[destination.toUpperCase()] || ``;
-  const prep = preposition[type];
+  const {price, startTime, endTime, isFavorite, offers, destination} = trip;
+  let {type} = trip;
+  type = type[0].toUpperCase() + type.slice(1);
+  const prep = Preposition[type.toUpperCase()];
   const formattedStartTime = getFormatEditTime(startTime);
   const formattedEndTime = getFormatEditTime(endTime);
   const offersElement = offers.map((it) => createOffer(it)).join(``);
-  const photosElement = photos.map((it) => createPhoto(it)).join(``);
+  const picturesElement = destination.pictures.map(({src, description}) => createPhoto(src, description)).join(``);
 
   return `<li class="trip-events__item">
     <form class="event  event--edit" action="#" method="post">
@@ -105,7 +106,7 @@ const createEventEditElement = (trip, mode) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type} ${prep}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination)}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -160,13 +161,13 @@ const createEventEditElement = (trip, mode) => {
           </div>
         </section>` : ``}
 
-        ${destination ? `<section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">${he.encode(destination)}</h3>
-          <p class="event__destination-description">${description}</p>
+        ${destination.name ? `<section class="event__section  event__section--destination">
+          <h3 class="event__section-title  event__section-title--destination">${he.encode(destination.name)}</h3>
+          <p class="event__destination-description">${destination.description}</p>
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              ${photosElement}
+              ${picturesElement}
             </div>
           </div>
         </section>` : ``}

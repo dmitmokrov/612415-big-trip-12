@@ -2,6 +2,7 @@ import SortView from '../view/sort.js';
 import DayListView from '../view/day-list.js';
 import DayView from '../view/day.js';
 import NoEvent from '../view/no-event.js';
+import LoadingView from '../view/loading.js';
 import EventPresenter from './event.js';
 import EventNewPresenter from './event-new.js';
 import {render, RenderPosition, replace, remove} from '../utils/render';
@@ -15,12 +16,14 @@ export default class Trip {
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
     this._currentSortType = SortType.DEFAULT;
+    this._isLoading = true;
 
     this._eventPresenter = {};
 
     this._sortComponent = null;
     this._dayListComponent = new DayListView();
     this._noEventComponent = new NoEvent();
+    this._loadingComponent = new LoadingView();
 
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
     this._eventChangeHandler = this._eventChangeHandler.bind(this);
@@ -88,6 +91,11 @@ export default class Trip {
         this._clearEvents();
         this._renderEvents();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderEvents();
+        break;
     }
   }
 
@@ -111,6 +119,11 @@ export default class Trip {
   }
 
   _renderEvents(trips = this._getEvents().slice()) {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     const isDefaultSorting = this._currentSortType === SortType.DEFAULT;
     const tripDays = [...new Set(trips.map((trip) => new Date(trip.startTime).toDateString()))];
     const days = isDefaultSorting ? tripDays : [true];
@@ -171,5 +184,9 @@ export default class Trip {
     Object.values(this._eventPresenter).forEach((presenter) => presenter.destroy());
     this._eventPresenter = {};
     this._dayListComponent.getElement().innerHTML = ``; // для удаления отрисованных дней
+  }
+
+  _renderLoading() {
+    render(this._tripContainer, this._loadingComponent, RenderPosition.BEFOREEND);
   }
 }

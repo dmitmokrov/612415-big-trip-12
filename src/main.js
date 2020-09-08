@@ -6,19 +6,12 @@ import TripPresenter from './presenter/trip.js';
 import FilterPresenter from './presenter/filter.js';
 import EventsModel from './model/events.js';
 import FilterModel from './model/filter.js';
-import {trips} from './mock/mock.js';
-import {MenuItem} from './const.js';
+import {MenuItem, UpdateType} from './const.js';
 import {render, RenderPosition, remove} from './utils/render.js';
 import Api from './api.js';
 
 const AUTHORIZATION = `Basic jsdgerovgridfgmkjueyio`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
-
-const api = new Api(END_POINT, AUTHORIZATION);
-
-api.getEvents().then((events) => {
-  console.log(events);
-});
 
 const bodyElement = document.querySelector(`.page-body`);
 const tripMainElement = bodyElement.querySelector(`.trip-main`);
@@ -26,16 +19,15 @@ const tripMainControlsElement = tripMainElement.querySelector(`.trip-main__trip-
 const tripEventsElement = bodyElement.querySelector(`.trip-events`);
 
 const menuComponent = new MenuView();
+
 const eventsModel = new EventsModel();
-eventsModel.setEvents(trips);
 const filterModel = new FilterModel();
 
-const tripInfoComponent = new TripInfoView(eventsModel.getEvents());
 const tripPresenter = new TripPresenter(tripEventsElement, eventsModel, filterModel);
 const filterPresenter = new FilterPresenter(tripMainControlsElement, filterModel, eventsModel);
 
-render(tripInfoComponent, new TripCostView(eventsModel.getEvents()), RenderPosition.BEFOREEND);
-render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
+const api = new Api(END_POINT, AUTHORIZATION);
+
 render(tripMainControlsElement, menuComponent, RenderPosition.AFTERBEGIN);
 
 let statsComponent = null;
@@ -65,3 +57,17 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (e
   evt.preventDefault();
   tripPresenter.createEvent();
 });
+
+api.getEvents()
+  .then((events) => {
+    eventsModel.setEvents(UpdateType.INIT, events);
+    const tripCostComponent = new TripCostView(eventsModel.getEvents());
+    const tripInfoComponent = new TripInfoView(eventsModel.getEvents());
+    render(tripInfoComponent, tripCostComponent, RenderPosition.BEFOREEND);
+    render(tripMainElement, tripInfoComponent, RenderPosition.AFTERBEGIN);
+  })
+  .catch(() => {
+    eventsModel.setEvents(UpdateType.INIT, []);
+  });
+
+// api._load({url: `offers`}).then(Api.toJSON).then((destinations) => console.log(destinations));
