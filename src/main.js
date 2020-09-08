@@ -33,7 +33,9 @@ let statsComponent = null;
 const menuClickHandler = (menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
-      remove(statsComponent);
+      if (statsComponent) {
+        remove(statsComponent);
+      }
       tripPresenter.init();
       break;
     case MenuItem.STATS:
