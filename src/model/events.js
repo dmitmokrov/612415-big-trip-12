@@ -46,4 +46,45 @@ export default class Events extends Observer {
 
     this._notify(updateType);
   }
+
+  static adaptToClient(event) {
+    const adaptedEvent = Object.assign(
+        {},
+        event,
+        {
+          isFavorite: event.is_favorite,
+          price: event.base_price,
+          startTime: event.date_from,
+          endTime: event.date_to,
+          destination: event.destination.name
+        }
+    );
+
+    delete adaptedEvent.is_favorite;
+    delete adaptedEvent.base_price;
+    delete adaptedEvent.date_from;
+    delete adaptedEvent.date_to;
+
+    return adaptedEvent;
+  }
+
+  static adaptToServer(event) {
+    const adaptedEvent = Object.assign(
+        {},
+        event,
+        {
+          'is_favorite': event.isFavorite,
+          'base_price': event.price,
+          'date_from': event.startTime,
+          'date_to': event.endTime
+        }
+    );
+
+    delete adaptedEvent.isFavorite;
+    delete adaptedEvent.price;
+    delete adaptedEvent.startTime;
+    delete adaptedEvent.endTime;
+
+    return adaptedEvent;
+  }
 }
