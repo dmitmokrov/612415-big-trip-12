@@ -23,10 +23,11 @@ const menuComponent = new MenuView();
 const eventsModel = new EventsModel();
 const filterModel = new FilterModel();
 
-const tripPresenter = new TripPresenter(tripEventsElement, eventsModel, filterModel);
+const api = new Api(END_POINT, AUTHORIZATION);
+
+const tripPresenter = new TripPresenter(tripEventsElement, eventsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(tripMainControlsElement, filterModel, eventsModel);
 
-const api = new Api(END_POINT, AUTHORIZATION);
 
 render(tripMainControlsElement, menuComponent, RenderPosition.AFTERBEGIN);
 
@@ -58,7 +59,7 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (e
   tripPresenter.createEvent();
 });
 
-api.getEvents()
+api.getAllData()
   .then((events) => {
     eventsModel.setEvents(UpdateType.INIT, events);
     const tripCostComponent = new TripCostView(eventsModel.getEvents());
@@ -69,5 +70,3 @@ api.getEvents()
   .catch(() => {
     eventsModel.setEvents(UpdateType.INIT, []);
   });
-
-// api._load({url: `offers`}).then(Api.toJSON).then((destinations) => console.log(destinations));

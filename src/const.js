@@ -1,7 +1,10 @@
 export const BLANK_EVENT = {
   type: `Bus`,
-  destination: ``,
-  // description: getDescription(descriptionText),
+  destination: {
+    name: ``,
+    description: ``,
+    pictures: []
+  },
   startTime: Date.now(),
   endTime: Date.now(),
   price: 100,

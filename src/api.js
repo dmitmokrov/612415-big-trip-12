@@ -1,4 +1,5 @@
 import EventsModel from './model/events.js';
+import StoreModel from './model/store.js';
 
 const Method = {
   GET: `GET`,
@@ -16,10 +17,30 @@ export default class Api {
     this._authorization = authorization;
   }
 
+  getAllData() {
+    return Promise.all([
+      this.getDestinations(),
+      this.getOffers(),
+      this.getEvents()
+    ]).then((res) => res[2]);
+  }
+
   getEvents() {
     return this._load({url: `points`})
     .then(Api.toJSON)
     .then((events) => events.map(EventsModel.adaptToClient));
+  }
+
+  getOffers() {
+    return this._load({url: `offers`})
+    .then(Api.toJSON)
+    .then((res) => StoreModel.setOffers(res));
+  }
+
+  getDestinations() {
+    return this._load({url: `destinations`})
+    .then(Api.toJSON)
+    .then((res) => StoreModel.setDestinations(res));
   }
 
   updateEvent(event) {

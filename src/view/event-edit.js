@@ -6,11 +6,12 @@ import he from 'he';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const createOffer = (offer) => {
-  const {title, price, isChecked} = offer;
+const createOffer = (offer, checkedOffers) => {
+  const {title, price} = offer;
+  const isChecked = checkedOffers.some((checkedOffer) => checkedOffer.title.toUpperCase() === title.toUpperCase());
 
   return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getFormatText(title)}" type="checkbox" name="event-offer-luggage" ${isChecked ? `checked` : ``}>
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getFormatText(title)}" type="checkbox" name="event-offer-${getFormatText(title)}" ${isChecked ? `checked` : ``}>
     <label class="event__offer-label" for="event-offer-${getFormatText(title)}">
       <span class="event__offer-title">${title}</span>
       &plus;
@@ -21,14 +22,14 @@ const createOffer = (offer) => {
 
 const createPhoto = (src, description) => `<img class="event__photo" src="${src}" alt="${description}">`;
 
-const createEventEditElement = (trip, mode) => {
+const createEventEditElement = (trip, mode, availableOffers) => {
   const {price, startTime, endTime, isFavorite, offers, destination} = trip;
   let {type} = trip;
   type = type[0].toUpperCase() + type.slice(1);
   const prep = Preposition[type.toUpperCase()];
   const formattedStartTime = getFormatEditTime(startTime);
   const formattedEndTime = getFormatEditTime(endTime);
-  const offersElement = offers.map((it) => createOffer(it)).join(``);
+  const offersElement = availableOffers.map((it) => createOffer(it, offers)).join(``);
   const picturesElement = destination.pictures.map(({src, description}) => createPhoto(src, description)).join(``);
 
   return `<li class="trip-events__item">
@@ -177,10 +178,11 @@ const createEventEditElement = (trip, mode) => {
 };
 
 export default class EventEdit extends SmartView {
-  constructor(trip, mode) {
+  constructor(trip, mode, availableOffers) {
     super();
     this._trip = trip;
     this._mode = mode;
+    this._availableOffers = availableOffers;
     this._datepicker = null;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
@@ -196,7 +198,7 @@ export default class EventEdit extends SmartView {
   }
 
   getTemplate() {
-    return createEventEditElement(this._trip, this._mode);
+    return createEventEditElement(this._trip, this._mode, this._availableOffers);
   }
 
   restoreHandlers() {

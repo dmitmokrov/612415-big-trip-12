@@ -3,6 +3,7 @@ import EventEditView from '../view/event-edit.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
 import {UpdateType, UserAction, EventEditMode} from '../const.js';
 import {isDatesEqual} from '../utils/common.js';
+import StoreModel from '../model/store.js';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -18,6 +19,7 @@ export default class Event {
     this._eventComponent = null;
     this._eventEditComponent = null;
     this._mode = Mode.DEFAULT;
+    this._availableOffers = null;
 
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._eventClickHandler = this._eventClickHandler.bind(this);
@@ -30,8 +32,10 @@ export default class Event {
     const prevEventEditComponent = this._eventEditComponent;
 
     this._event = event;
+    this._availableOffers = this._getOffers();
+
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event, EventEditMode.EDIT_EVENT);
+    this._eventEditComponent = new EventEditView(event, EventEditMode.EDIT_EVENT, this._availableOffers);
 
     this._eventComponent.setClickHandler(this._eventClickHandler);
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
@@ -52,6 +56,10 @@ export default class Event {
 
     remove(prevEventComponent);
     remove(prevEventEditComponent);
+  }
+
+  _getOffers() {
+    return StoreModel.getOffers().filter((offer) => offer.type.toUpperCase() === this._event.type.toUpperCase()).map((it) => it.offers)[0];
   }
 
   destroy() {

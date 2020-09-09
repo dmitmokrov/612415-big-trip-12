@@ -11,10 +11,12 @@ import {sortByTime, sortByPrice, sortByStartTime} from '../utils/common.js';
 import {UpdateType, UserAction, filter, FilterType} from '../const.js';
 
 export default class Trip {
-  constructor(tripContainer, eventsModel, filterModel) {
+  constructor(tripContainer, eventsModel, filterModel, api) {
     this._tripContainer = tripContainer;
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
+    this._api = api;
+
     this._currentSortType = SortType.DEFAULT;
     this._isLoading = true;
 
@@ -35,6 +37,9 @@ export default class Trip {
   }
 
   init() {
+    // this._api.getOffers().then(() => console.log(StoreModel.getOffers()));
+    // this._api.getDestinations().then(() => console.log(StoreModel.getDestinations()));
+
     if (this._eventsModel.length === 0) {
       this._renderNoEvent();
     } else {
