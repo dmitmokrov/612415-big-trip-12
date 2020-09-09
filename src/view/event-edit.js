@@ -154,7 +154,7 @@ const createEventEditElement = (trip, mode, availableOffers) => {
       </header>
 
       <section class="event__details">
-        ${offers.length ? `<section class="event__section  event__section--offers">
+        ${availableOffers.length ? `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
@@ -192,6 +192,7 @@ export default class EventEdit extends SmartView {
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
     this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
+    this._offersChangeHandler = this._offersChangeHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatePickers();
@@ -229,6 +230,15 @@ export default class EventEdit extends SmartView {
     this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeChangeHandler);
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._destinationChangeHandler);
     this.getElement().querySelector(`.event__input--price`).addEventListener(`change`, this._priceChangeHandler);
+    if (this.getElement().querySelector(`.event__available-offers`)) {
+      this.getElement().querySelector(`.event__available-offers`).addEventListener(`change`, this._offersChangeHandler);
+    }
+  }
+
+  _offersChangeHandler(evt) {
+    evt.preventDefault();
+    const title = this.getElement().querySelector(`label[for="${evt.target.name}"] .event__offer-title`).textContent;
+    this.updateData({offers: !evt.target.checked ? [...this._trip.offers.filter((offer) => offer.title !== title)] : [...this._trip.offers, ...this._availableOffers.filter((offer) => offer.title === title)]});
   }
 
   _setDatePickers() {
@@ -275,6 +285,12 @@ export default class EventEdit extends SmartView {
   _priceChangeHandler(evt) {
     evt.preventDefault();
     this.updateData({price: evt.target.value});
+  }
+
+  _offersChangeHandler(evt) {
+    evt.preventDefault();
+    const title = this.getElement().querySelector(`label[for="${evt.target.name}"] .event__offer-title`).textContent;
+    this.updateData({offers: !evt.target.checked ? [...this._trip.offers.filter((offer) => offer.title !== title)] : [...this._trip.offers, ...this._availableOffers.filter((offer) => offer.title === title)]});
   }
 
   _startTimeChangeHandler([userDate]) {
