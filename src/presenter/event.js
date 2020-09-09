@@ -20,6 +20,7 @@ export default class Event {
     this._eventEditComponent = null;
     this._mode = Mode.DEFAULT;
     this._availableOffers = null;
+    this._destinations = null;
 
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._eventClickHandler = this._eventClickHandler.bind(this);
@@ -33,9 +34,10 @@ export default class Event {
 
     this._event = event;
     this._availableOffers = this._getOffers();
+    this._destinations = this._getDestinations();
 
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event, EventEditMode.EDIT_EVENT, this._availableOffers);
+    this._eventEditComponent = new EventEditView(event, EventEditMode.EDIT_EVENT, this._availableOffers, this._destinations);
 
     this._eventComponent.setClickHandler(this._eventClickHandler);
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
@@ -60,6 +62,10 @@ export default class Event {
 
   _getOffers() {
     return StoreModel.getOffers().filter((offer) => offer.type.toUpperCase() === this._event.type.toUpperCase()).map((it) => it.offers)[0];
+  }
+
+  _getDestinations() {
+    return StoreModel.getDestinations();
   }
 
   destroy() {
