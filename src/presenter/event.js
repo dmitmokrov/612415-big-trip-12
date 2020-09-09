@@ -26,6 +26,7 @@ export default class Event {
     this._eventClickHandler = this._eventClickHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._typeChangeHandler = this._typeChangeHandler.bind(this);
   }
 
   init(event) {
@@ -42,6 +43,7 @@ export default class Event {
     this._eventComponent.setClickHandler(this._eventClickHandler);
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
     this._eventEditComponent.setDeleteClickHandler(this._deleteClickHandler);
+    this._eventEditComponent.setTypeChangeHandler(this._typeChangeHandler);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventList, this._eventComponent, RenderPosition.BEFOREEND);
@@ -58,6 +60,10 @@ export default class Event {
 
     remove(prevEventComponent);
     remove(prevEventEditComponent);
+  }
+
+  _typeChangeHandler(update) {
+    this._changeData(UserAction.EDIT_EVENT, UpdateType.PATCH, update);
   }
 
   _getOffers() {

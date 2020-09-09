@@ -221,6 +221,11 @@ export default class EventEdit extends SmartView {
     this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
   }
 
+  setTypeChangeHandler(callback) {
+    this._callback.typeChange = callback;
+    this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeChangeHandler);
+  }
+
   reset(event) {
     this.updateData(event);
   }
@@ -270,7 +275,8 @@ export default class EventEdit extends SmartView {
 
   _typeChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({type: evt.target.value});
+    this.updateData({type: evt.target.value, offers: []});
+    this._callback.typeChange(this._trip);
   }
 
   _destinationChangeHandler(evt) {
