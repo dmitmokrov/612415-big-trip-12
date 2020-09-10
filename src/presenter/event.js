@@ -3,6 +3,7 @@ import EventEditView from '../view/event-edit.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
 import {UpdateType, UserAction, EventEditMode} from '../const.js';
 import {isDatesEqual} from '../utils/common.js';
+import StoreModel from '../model/store.js';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -18,11 +19,14 @@ export default class Event {
     this._eventComponent = null;
     this._eventEditComponent = null;
     this._mode = Mode.DEFAULT;
+    this._availableOffers = null;
+    this._destinations = null;
 
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._eventClickHandler = this._eventClickHandler.bind(this);
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._typeChangeHandler = this._typeChangeHandler.bind(this);
   }
 
   init(event) {
@@ -30,12 +34,16 @@ export default class Event {
     const prevEventEditComponent = this._eventEditComponent;
 
     this._event = event;
+    this._availableOffers = this._getOffers();
+    this._destinations = this._getDestinations();
+
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event, EventEditMode.EDIT_EVENT);
+    this._eventEditComponent = new EventEditView(event, EventEditMode.EDIT_EVENT, this._availableOffers, this._destinations);
 
     this._eventComponent.setClickHandler(this._eventClickHandler);
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
     this._eventEditComponent.setDeleteClickHandler(this._deleteClickHandler);
+    this._eventEditComponent.setTypeChangeHandler(this._typeChangeHandler);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventList, this._eventComponent, RenderPosition.BEFOREEND);
@@ -52,6 +60,18 @@ export default class Event {
 
     remove(prevEventComponent);
     remove(prevEventEditComponent);
+  }
+
+  _typeChangeHandler(update) {
+    this._changeData(UserAction.EDIT_EVENT, UpdateType.PATCH, update);
+  }
+
+  _getOffers() {
+    return StoreModel.getOffers().filter((offer) => offer.type.toUpperCase() === this._event.type.toUpperCase()).map((it) => it.offers)[0];
+  }
+
+  _getDestinations() {
+    return StoreModel.getDestinations();
   }
 
   destroy() {

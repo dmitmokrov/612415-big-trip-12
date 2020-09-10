@@ -1,16 +1,17 @@
 import SmartView from './smart.js';
 import {getFormatEditTime, getFormatText} from '../utils/common.js';
-import {preposition, Description, datePickerOptions, EventEditMode} from '../const.js';
+import {Preposition, datePickerOptions, EventEditMode} from '../const.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const createOffer = (offer) => {
-  const {title, price, isChecked} = offer;
+const createOffer = (offer, checkedOffers) => {
+  const {title, price} = offer;
+  const isChecked = checkedOffers.some((checkedOffer) => checkedOffer.title.toUpperCase() === title.toUpperCase());
 
   return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getFormatText(title)}" type="checkbox" name="event-offer-luggage" ${isChecked ? `checked` : ``}>
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getFormatText(title)}" type="checkbox" name="event-offer-${getFormatText(title)}" ${isChecked ? `checked` : ``}>
     <label class="event__offer-label" for="event-offer-${getFormatText(title)}">
       <span class="event__offer-title">${title}</span>
       &plus;
@@ -19,16 +20,22 @@ const createOffer = (offer) => {
   </div>`;
 };
 
-const createPhoto = (photo) => `<img class="event__photo" src="${photo}" alt="Event photo"></img>`;
+const createPhoto = (src, description) => `<img class="event__photo" src="${src}" alt="${description}">`;
 
-const createEventEditElement = (trip, mode) => {
-  const {type, destination, startTime, endTime, price, offers, photos, isFavorite} = trip;
-  const description = Description[destination.toUpperCase()] || ``;
-  const prep = preposition[type];
+const createDestinationOption = (destination) => {
+  return `<option value="${destination.name}"></option>`;
+};
+
+const createEventEditElement = (trip, mode, availableOffers, destinations) => {
+  const {price, startTime, endTime, isFavorite, offers, destination} = trip;
+  let {type} = trip;
+  type = type[0].toUpperCase() + type.slice(1);
+  const prep = Preposition[type.toUpperCase()];
   const formattedStartTime = getFormatEditTime(startTime);
   const formattedEndTime = getFormatEditTime(endTime);
-  const offersElement = offers.map((it) => createOffer(it)).join(``);
-  const photosElement = photos.map((it) => createPhoto(it)).join(``);
+  const offersElement = availableOffers.map((it) => createOffer(it, offers)).join(``);
+  const picturesElement = destination.pictures.map(({src, description}) => createPhoto(src, description)).join(``);
+  const destinationOptionsElement = destinations.map((dest) => createDestinationOption(dest)).join(``);
 
   return `<li class="trip-events__item">
     <form class="event  event--edit" action="#" method="post">
@@ -105,13 +112,9 @@ const createEventEditElement = (trip, mode) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type} ${prep}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination)}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
-            <option value="London"></option>
-            <option value="Paris"></option>
+            ${destinationOptionsElement}
           </datalist>
         </div>
 
@@ -152,7 +155,7 @@ const createEventEditElement = (trip, mode) => {
       </header>
 
       <section class="event__details">
-        ${offers.length ? `<section class="event__section  event__section--offers">
+        ${availableOffers.length ? `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
@@ -160,13 +163,13 @@ const createEventEditElement = (trip, mode) => {
           </div>
         </section>` : ``}
 
-        ${destination ? `<section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">${he.encode(destination)}</h3>
-          <p class="event__destination-description">${description}</p>
+        ${destination.name ? `<section class="event__section  event__section--destination">
+          <h3 class="event__section-title  event__section-title--destination">${he.encode(destination.name)}</h3>
+          <p class="event__destination-description">${destination.description}</p>
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              ${photosElement}
+              ${picturesElement}
             </div>
           </div>
         </section>` : ``}
@@ -176,10 +179,12 @@ const createEventEditElement = (trip, mode) => {
 };
 
 export default class EventEdit extends SmartView {
-  constructor(trip, mode) {
+  constructor(trip, mode, availableOffers, destinations) {
     super();
     this._trip = trip;
     this._mode = mode;
+    this._availableOffers = availableOffers;
+    this._destinations = destinations;
     this._datepicker = null;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
@@ -189,13 +194,14 @@ export default class EventEdit extends SmartView {
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
     this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
+    this._offersChangeHandler = this._offersChangeHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatePickers();
   }
 
   getTemplate() {
-    return createEventEditElement(this._trip, this._mode);
+    return createEventEditElement(this._trip, this._mode, this._availableOffers, this._destinations);
   }
 
   restoreHandlers() {
@@ -215,6 +221,11 @@ export default class EventEdit extends SmartView {
     this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
   }
 
+  setTypeChangeHandler(callback) {
+    this._callback.typeChange = callback;
+    this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeChangeHandler);
+  }
+
   reset(event) {
     this.updateData(event);
   }
@@ -226,6 +237,9 @@ export default class EventEdit extends SmartView {
     this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeChangeHandler);
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._destinationChangeHandler);
     this.getElement().querySelector(`.event__input--price`).addEventListener(`change`, this._priceChangeHandler);
+    if (this.getElement().querySelector(`.event__available-offers`)) {
+      this.getElement().querySelector(`.event__available-offers`).addEventListener(`change`, this._offersChangeHandler);
+    }
   }
 
   _setDatePickers() {
@@ -261,17 +275,24 @@ export default class EventEdit extends SmartView {
 
   _typeChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({type: evt.target.value});
+    this.updateData({type: evt.target.value, offers: []});
+    this._callback.typeChange(this._trip);
   }
 
   _destinationChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({destination: evt.target.value});
+    this.updateData({destination: this._destinations.filter((dest) => dest.name === evt.target.value)[0]});
   }
 
   _priceChangeHandler(evt) {
     evt.preventDefault();
     this.updateData({price: evt.target.value});
+  }
+
+  _offersChangeHandler(evt) {
+    evt.preventDefault();
+    const title = this.getElement().querySelector(`label[for="${evt.target.name}"] .event__offer-title`).textContent;
+    this.updateData({offers: !evt.target.checked ? [...this._trip.offers.filter((offer) => offer.title !== title)] : [...this._trip.offers, ...this._availableOffers.filter((offer) => offer.title === title)]});
   }
 
   _startTimeChangeHandler([userDate]) {

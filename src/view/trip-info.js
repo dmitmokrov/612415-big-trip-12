@@ -2,11 +2,15 @@ import AbstractView from './abstract.js';
 import {getFormatDate} from '../utils/common.js';
 
 const createTripInfoElement = (trips) => {
-  const firstLocation = trips[0];
-  const lastLocation = trips[trips.length - 1];
-  const dates = trips.length ? `${getFormatDate(firstLocation.startTime)}&nbsp;&mdash;&nbsp;${getFormatDate(lastLocation.startTime)}` : ``;
-  const uniqueLocations = [...new Set(trips.map((trip) => trip.destination))];
-  const title = (uniqueLocations.length > 3) ? `${firstLocation.destination} &mdash;...&mdash; ${lastLocation.destination}` : uniqueLocations.join(`-`);
+  const firstLocation = trips ? trips[0] : ``;
+  const lastLocation = trips ? trips[trips.length - 1] : ``;
+
+  const dates = trips ? `${getFormatDate(firstLocation.startTime)}&nbsp;&mdash;&nbsp;${getFormatDate(lastLocation.startTime)}` : ``;
+  const uniqueLocations = trips ? [...new Set(trips.map((trip) => trip.destination.name))] : ``;
+  let title = ``;
+  if (trips) {
+    title = (uniqueLocations.length > 3) ? `${firstLocation.destination.name} &mdash;...&mdash; ${lastLocation.destination.name}` : uniqueLocations.join(`-`);
+  }
 
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
