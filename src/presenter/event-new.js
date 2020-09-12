@@ -1,7 +1,7 @@
 import EventEditView from '../view/event-edit.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {UpdateType, UserAction, EventEditMode, BLANK_EVENT} from '../const.js';
-import {generateId} from '../mock/mock.js';
+import {generateId} from '../utils/common.js';
 
 export default class EventNew {
   constructor(eventList, changeData) {

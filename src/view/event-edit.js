@@ -3,6 +3,7 @@ import {getFormatEditTime, getFormatText} from '../utils/common.js';
 import {Preposition, datePickerOptions, EventEditMode} from '../const.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
+import StoreModel from '../model/store.js';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
@@ -26,16 +27,18 @@ const createDestinationOption = (destination) => {
   return `<option value="${destination.name}"></option>`;
 };
 
-const createEventEditElement = (trip, mode, availableOffers, destinations) => {
+const createEventEditElement = (trip, mode, destinations, availableOffers) => {
   const {price, startTime, endTime, isFavorite, offers, destination} = trip;
   let {type} = trip;
   type = type[0].toUpperCase() + type.slice(1);
   const prep = Preposition[type.toUpperCase()];
   const formattedStartTime = getFormatEditTime(startTime);
   const formattedEndTime = getFormatEditTime(endTime);
-  const offersElement = availableOffers.map((it) => createOffer(it, offers)).join(``);
+  // const offersElement = availableOffers.map((it) => createOffer(it, offers)).join(``);
+  const offersElement = availableOffers[type.toLowerCase()].map((it) => createOffer(it, offers)).join(``);
   const picturesElement = destination.pictures.map(({src, description}) => createPhoto(src, description)).join(``);
   const destinationOptionsElement = destinations.map((dest) => createDestinationOption(dest)).join(``);
+  // console.log(availableOffers);
 
   return `<li class="trip-events__item">
     <form class="event  event--edit" action="#" method="post">
@@ -155,7 +158,7 @@ const createEventEditElement = (trip, mode, availableOffers, destinations) => {
       </header>
 
       <section class="event__details">
-        ${availableOffers.length ? `<section class="event__section  event__section--offers">
+        ${availableOffers[type.toLowerCase()].length ? `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
@@ -179,13 +182,20 @@ const createEventEditElement = (trip, mode, availableOffers, destinations) => {
 };
 
 export default class EventEdit extends SmartView {
-  constructor(trip, mode, availableOffers, destinations) {
+  constructor(trip, mode) {
     super();
     this._trip = trip;
     this._mode = mode;
-    this._availableOffers = availableOffers;
-    this._destinations = destinations;
+    this._availableOffers = {};
+
+    StoreModel.getOffers().forEach((it) => {
+      this._availableOffers[it.type] = it.offers;
+    });
+
+    this._destinations = StoreModel.getDestinations();
     this._datepicker = null;
+
+    this._clickHandler = this._clickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._favoriteChangeHandler = this._favoriteChangeHandler.bind(this);
@@ -201,7 +211,7 @@ export default class EventEdit extends SmartView {
   }
 
   getTemplate() {
-    return createEventEditElement(this._trip, this._mode, this._availableOffers, this._destinations);
+    return createEventEditElement(this._trip, this._mode, this._destinations, this._availableOffers);
   }
 
   restoreHandlers() {
@@ -209,6 +219,7 @@ export default class EventEdit extends SmartView {
     this._setDatePickers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
+    this.setClickHandler(this._callback.click);
   }
 
   setDeleteClickHandler(callback) {
@@ -221,9 +232,11 @@ export default class EventEdit extends SmartView {
     this.getElement().querySelector(`form`).addEventListener(`submit`, this._formSubmitHandler);
   }
 
-  setTypeChangeHandler(callback) {
-    this._callback.typeChange = callback;
-    this.getElement().querySelector(`.event__type-list`).addEventListener(`change`, this._typeChangeHandler);
+  setClickHandler(callback) {
+    if (this._mode === EventEditMode.EDIT_EVENT) {
+      this._callback.click = callback;
+      this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._clickHandler);
+    }
   }
 
   reset(event) {
@@ -276,7 +289,6 @@ export default class EventEdit extends SmartView {
   _typeChangeHandler(evt) {
     evt.preventDefault();
     this.updateData({type: evt.target.value, offers: []});
-    this._callback.typeChange(this._trip);
   }
 
   _destinationChangeHandler(evt) {
@@ -292,7 +304,14 @@ export default class EventEdit extends SmartView {
   _offersChangeHandler(evt) {
     evt.preventDefault();
     const title = this.getElement().querySelector(`label[for="${evt.target.name}"] .event__offer-title`).textContent;
-    this.updateData({offers: !evt.target.checked ? [...this._trip.offers.filter((offer) => offer.title !== title)] : [...this._trip.offers, ...this._availableOffers.filter((offer) => offer.title === title)]});
+    this.updateData({offers: !evt.target.checked ?
+      [...this._trip.offers.filter((offer) => offer.title !== title)] :
+      [...this._trip.offers, ...this._availableOffers[this._trip.type.toLowerCase()].filter((offer) => offer.title === title)]});
+  }
+
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
   _startTimeChangeHandler([userDate]) {
