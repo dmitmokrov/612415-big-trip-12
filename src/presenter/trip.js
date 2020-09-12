@@ -37,9 +37,6 @@ export default class Trip {
   }
 
   init() {
-    // this._api.getOffers().then(() => console.log(StoreModel.getOffers()));
-    // this._api.getDestinations().then(() => console.log(StoreModel.getDestinations()));
-
     if (this._eventsModel.length === 0) {
       this._renderNoEvent();
     } else {
