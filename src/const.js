@@ -1,12 +1,12 @@
 export const BLANK_EVENT = {
-  type: `Bus`,
+  type: `bus`,
   destination: {
     name: ``,
     description: ``,
     pictures: []
   },
-  startTime: Date.now(),
-  endTime: Date.now(),
+  startTime: new Date(),
+  endTime: new Date(),
   price: 100,
   photos: [],
   offers: [],
