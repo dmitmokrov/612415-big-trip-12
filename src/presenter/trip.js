@@ -115,7 +115,9 @@ export default class Trip {
         this._eventsModel.deleteEvent(updateType, update);
         break;
       case UserAction.EDIT_EVENT:
-        this._eventsModel.updateEvent(updateType, update);
+        this._api.updateEvent(update).then((response) => {
+          this._eventsModel.updateEvent(updateType, response);
+        });
         break;
     }
   }

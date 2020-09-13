@@ -47,7 +47,7 @@ export default class Api {
     return this._load({
       url: `points/${event.id}`,
       method: Method.PUT,
-      body: JSON.stringify(EventsModel.adaptToServer),
+      body: JSON.stringify(EventsModel.adaptToServer(event)),
       headers: new Headers({'Content-Type': `application/json`})
     })
     .then(Api.toJSON)
