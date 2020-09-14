@@ -41,6 +41,18 @@ export default class EventNew {
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._eventEditComponent.updateData({isSaving: true, isDisabled: true});
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._eventEditComponent.updateData({isSaving: false, isDisabled: false, isDeleting: false});
+    };
+
+    this._eventEditComponent.shake(resetFormState);
+  }
+
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
@@ -54,6 +66,6 @@ export default class EventNew {
 
   _formSubmitHandler(event) {
     this._changeData(UserAction.ADD_EVENT, UpdateType.MAJOR, event);
-    this.destroy();
+    // this.destroy();
   }
 }
