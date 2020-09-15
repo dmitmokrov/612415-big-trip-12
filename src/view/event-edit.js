@@ -1,6 +1,6 @@
 import SmartView from './smart.js';
 import {getFormatEditTime, getFormatText} from '../utils/common.js';
-import {Preposition, datePickerOptions, EventEditMode} from '../const.js';
+import {Preposition, datePickerOptions, EventEditMode, types, activityStartIndex} from '../const.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
 import StoreModel from '../model/store.js';
@@ -27,6 +27,13 @@ const createDestinationOption = (destination) => {
   return `<option value="${destination.name}"></option>`;
 };
 
+const createTypeElement = (type, tripType) => {
+  return `<div class="event__type-item">
+    <input id="event-type-${type}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === tripType.toLowerCase() ? `checked` : ``}>
+    <label class="event__type-label  event__type-label--${type}" for="event-type-${type}">${type[0].toUpperCase() + type.slice(1)}</label>
+  </div>`;
+};
+
 const createEventEditElement = (trip, mode, destinations, availableOffers) => {
   const {price, startTime, endTime, isFavorite, offers, destination, isDisabled, isSaving, isDeleting} = trip;
   let {type} = trip;
@@ -38,6 +45,8 @@ const createEventEditElement = (trip, mode, destinations, availableOffers) => {
   const picturesElement = destination.pictures.map(({src, description}) => createPhoto(src, description)).join(``);
   const destinationOptionsElement = destinations.map((dest) => createDestinationOption(dest)).join(``);
   const deleteButtonText = isDeleting ? `Deleting...` : `Delete`;
+  const typeGroupTransfer = types.slice(0, activityStartIndex).map((it) => createTypeElement(it, type)).join(``);
+  const typeGroupActivity = types.slice(activityStartIndex).map((it) => createTypeElement(it, type)).join(``);
 
   return `<li class="trip-events__item">
     <form class="event  event--edit" action="#" method="post">
@@ -52,60 +61,12 @@ const createEventEditElement = (trip, mode, destinations, availableOffers) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Transfer</legend>
-
-              <div class="event__type-item">
-                <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="Taxi">
-                <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="Bus">
-                <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="Train">
-                <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="Ship">
-                <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="Transport">
-                <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="Drive">
-                <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="Flight">
-                <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-              </div>
+              ${typeGroupTransfer}
             </fieldset>
 
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Activity</legend>
-
-              <div class="event__type-item">
-                <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="Check-in">
-                <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="Sightseeing">
-                <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="Restaurant">
-                <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-              </div>
+              ${typeGroupActivity}
             </fieldset>
           </div>
         </div>

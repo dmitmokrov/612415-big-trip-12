@@ -74,3 +74,6 @@ export const datePickerOptions = {
   dateFormat: `d/m/y H:i`,
   // time_24hr: true,
 };
+
+export const types = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
+export const activityStartIndex = 7;
