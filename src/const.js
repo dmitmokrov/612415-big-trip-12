@@ -1,3 +1,5 @@
+export const MAX_OFFERS_LENGTH = 3;
+
 export const BLANK_EVENT = {
   type: `bus`,
   destination: {
