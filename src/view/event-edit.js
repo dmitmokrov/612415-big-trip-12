@@ -267,7 +267,7 @@ export default class EventEdit extends SmartView {
 
   _priceChangeHandler(evt) {
     evt.preventDefault();
-    this.updateData({price: evt.target.value});
+    this.updateData({price: evt.target.value}, true);
   }
 
   _offersChangeHandler(evt) {
