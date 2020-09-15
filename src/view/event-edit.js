@@ -48,8 +48,8 @@ const createEventEditElement = (trip, mode, destinations, availableOffers) => {
   const typeGroupTransfer = types.slice(0, activityStartIndex).map((it) => createTypeElement(it, type)).join(``);
   const typeGroupActivity = types.slice(activityStartIndex).map((it) => createTypeElement(it, type)).join(``);
 
-  return `<li class="trip-events__item">
-    <form class="event  event--edit" action="#" method="post">
+  return `${mode === EventEditMode.EDIT_EVENT ? `<li class="trip-events__item">` : `<div>`}
+    <form class="${mode === EventEditMode.ADD_EVENT ? `trip-events__item` : ``} event  event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -148,7 +148,7 @@ const createEventEditElement = (trip, mode, destinations, availableOffers) => {
         </section>` : ``}
       </section>
     </form>
-  </li>`;
+  ${mode === EventEditMode.EDIT_EVENT ? `</li>` : `</div>`}`;
 };
 
 export default class EventEdit extends SmartView {
@@ -175,7 +175,6 @@ export default class EventEdit extends SmartView {
     this._startTimeChangeHandler = this._startTimeChangeHandler.bind(this);
     this._endTimeChangeHandler = this._endTimeChangeHandler.bind(this);
     this._offersChangeHandler = this._offersChangeHandler.bind(this);
-
     this._setInnerHandlers();
     this._setDatePickers();
   }

@@ -1,7 +1,6 @@
 import EventEditView from '../view/event-edit.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {UpdateType, UserAction, EventEditMode, BLANK_EVENT} from '../const.js';
-// import {generateId} from '../utils/common.js';
 
 export default class EventNew {
   constructor(eventList, changeData) {
@@ -25,7 +24,7 @@ export default class EventNew {
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
     this._eventEditComponent.setDeleteClickHandler(this._deleteClickHandler);
 
-    render(this._eventList, this._eventEditComponent, RenderPosition.AFTERBEGIN);
+    render(this._eventList.querySelector(`.trip-sort`), this._eventEditComponent, RenderPosition.AFTER);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }

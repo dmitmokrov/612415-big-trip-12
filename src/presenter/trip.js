@@ -33,7 +33,7 @@ export default class Trip {
     this._modelEventsChangeHandler = this._modelEventsChangeHandler.bind(this);
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
 
-    this._eventNewPresenter = new EventNewPresenter(this._dayListComponent, this._eventChangeHandler);
+    this._eventNewPresenter = new EventNewPresenter(this._tripContainer, this._eventChangeHandler);
   }
 
   init() {
