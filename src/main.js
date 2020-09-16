@@ -66,3 +66,13 @@ api.getAllData()
   .catch(() => {
     eventsModel.setEvents(UpdateType.INIT, []);
   });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+  .then(() => {
+    console.log(`ServiceWorker available`);
+  })
+  .catch(() => {
+    console.error(`ServiceWorker is not available`);
+  });
+});
