@@ -1,12 +1,14 @@
+export const MAX_OFFERS_LENGTH = 3;
+
 export const BLANK_EVENT = {
-  type: `Bus`,
+  type: `bus`,
   destination: {
     name: ``,
     description: ``,
     pictures: []
   },
-  startTime: Date.now(),
-  endTime: Date.now(),
+  startTime: new Date(),
+  endTime: new Date(),
   price: 100,
   photos: [],
   offers: [],
@@ -72,3 +74,6 @@ export const datePickerOptions = {
   dateFormat: `d/m/y H:i`,
   // time_24hr: true,
 };
+
+export const types = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
+export const activityStartIndex = 7;

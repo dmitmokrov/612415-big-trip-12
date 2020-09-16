@@ -23,12 +23,17 @@ export default class Smart extends Abstract {
     throw new Error(`Abstract method not implemented: resetHandler`);
   }
 
-  updateData(update) {
+  updateData(update, isUpdateDataOnly = false) {
     if (!update) {
       return;
     }
 
     this._trip = Object.assign({}, this._trip, update);
+
+    if (isUpdateDataOnly) {
+      return;
+    }
+
     this.updateElement();
   }
 }

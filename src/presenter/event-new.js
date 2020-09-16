@@ -1,7 +1,6 @@
 import EventEditView from '../view/event-edit.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {UpdateType, UserAction, EventEditMode, BLANK_EVENT} from '../const.js';
-import {generateId} from '../mock/mock.js';
 
 export default class EventNew {
   constructor(eventList, changeData) {
@@ -25,7 +24,7 @@ export default class EventNew {
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
     this._eventEditComponent.setDeleteClickHandler(this._deleteClickHandler);
 
-    render(this._eventList, this._eventEditComponent, RenderPosition.AFTERBEGIN);
+    render(this._eventList.querySelector(`.trip-sort`), this._eventEditComponent, RenderPosition.AFTER);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
@@ -41,6 +40,18 @@ export default class EventNew {
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._eventEditComponent.updateData({isSaving: true, isDisabled: true});
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._eventEditComponent.updateData({isSaving: false, isDisabled: false, isDeleting: false});
+    };
+
+    this._eventEditComponent.shake(resetFormState);
+  }
+
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
@@ -53,7 +64,7 @@ export default class EventNew {
   }
 
   _formSubmitHandler(event) {
-    this._changeData(UserAction.ADD_EVENT, UpdateType.MAJOR, Object.assign({id: generateId()}, event));
-    this.destroy();
+    this._changeData(UserAction.ADD_EVENT, UpdateType.MAJOR, event);
+    // this.destroy();
   }
 }

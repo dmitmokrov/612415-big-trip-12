@@ -33,3 +33,5 @@ export const updateItem = (arr, item) => {
 
   return [...arr.slice(0, index), item, ...arr.slice(index + 1)];
 };
+
+// export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);

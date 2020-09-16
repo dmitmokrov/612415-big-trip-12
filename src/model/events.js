@@ -57,7 +57,10 @@ export default class Events extends Observer {
           isFavorite: event.is_favorite,
           price: event.base_price,
           startTime: event.date_from !== null ? new Date(event.date_from) : event.date_from,
-          endTime: event.date_to !== null ? new Date(event.date_to) : event.date_to
+          endTime: event.date_to !== null ? new Date(event.date_to) : event.date_to,
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
         }
     );
 
@@ -75,9 +78,9 @@ export default class Events extends Observer {
         event,
         {
           'is_favorite': event.isFavorite,
-          'base_price': event.price,
-          'date_from': event.startTime instanceof Date ? event.startTime.toISOstring() : null,
-          'date_to': event.endTime instanceof Date ? event.endTime.toISOstring() : null
+          'base_price': Number(event.price),
+          'date_from': event.startTime instanceof Date ? event.startTime.toISOString() : null,
+          'date_to': event.endTime instanceof Date ? event.endTime.toISOString() : null
         }
     );
 
@@ -85,6 +88,9 @@ export default class Events extends Observer {
     delete adaptedEvent.price;
     delete adaptedEvent.startTime;
     delete adaptedEvent.endTime;
+    delete adaptedEvent.isDisabled;
+    delete adaptedEvent.isSaving;
+    delete adaptedEvent.isDeleting;
 
     return adaptedEvent;
   }
