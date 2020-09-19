@@ -2,8 +2,10 @@ import {nanoid} from 'nanoid';
 import EventsModel from '../model/events.js';
 
 const getSyncedEvents = (items) => {
-  return items.filter((success) => success)
-  .map(({payload}) => payload.point);
+  return items.filter(({success}) => success)
+  .map(({payload}) => {
+    return payload.point;
+  });
 };
 
 const createStoreStructure = (items) => {
@@ -15,9 +17,17 @@ const createStoreStructure = (items) => {
 };
 
 export default class Provider {
-  costructor(api, store) {
+  constructor(api, store) {
     this._api = api;
     this._store = store;
+  }
+
+  getAllData() {
+    if (Provider.isOnline()) {
+      return this._api.getAllData();
+    }
+
+    return this.getEvents();
   }
 
   getEvents() {
@@ -30,7 +40,7 @@ export default class Provider {
       });
     }
 
-    const storeEvents = Object.values(this._store.getEvents());
+    const storeEvents = Object.values(this._store.getItems());
 
     return Promise.resolve(storeEvents.map(EventsModel.adaptToClient));
   }
@@ -79,7 +89,7 @@ export default class Provider {
 
   sync() {
     if (Provider.isOnline()) {
-      const storeEvents = Object.values(this._store.getEvents());
+      const storeEvents = Object.values(this._store.getItems());
 
       return this._api.sync(storeEvents)
       .then((response) => {
