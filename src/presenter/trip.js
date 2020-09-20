@@ -67,7 +67,6 @@ export default class Trip {
     const filterType = this._filterModel.getFilter();
     const events = this._eventsModel.getEvents();
     const filteredEvents = filter[filterType](events);
-
     switch (this._currentSortType) {
       case SortType.TIME:
         return filteredEvents.sort(sortByTime);

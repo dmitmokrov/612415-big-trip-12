@@ -19,9 +19,9 @@ export const getFormatEditTime = (time) => {
 
 export const getFormatText = (text) => text.toLowerCase().split(` `).join(`-`);
 
-export const sortByTime = (a, b) => (b.endTime - b.startTime - a.endTime + a.startTime);
+export const sortByTime = (a, b) => (b.endTime.getTime() - b.startTime.getTime() - a.endTime.getTime() + a.startTime.getTime());
 export const sortByPrice = (a, b) => b.price - a.price;
-export const sortByStartTime = (a, b) => a.startTime - b.startTime;
+export const sortByStartTime = (a, b) => a.startTime.getTime() - b.startTime.getTime();
 
 export const isDatesEqual = (a, b) => a === b;
 
@@ -33,5 +33,3 @@ export const updateItem = (arr, item) => {
 
   return [...arr.slice(0, index), item, ...arr.slice(index + 1)];
 };
-
-// export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);

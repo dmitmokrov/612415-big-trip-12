@@ -10,7 +10,6 @@ export const BLANK_EVENT = {
   startTime: new Date(),
   endTime: new Date(),
   price: 100,
-  photos: [],
   offers: [],
   isFavorite: false
 };
