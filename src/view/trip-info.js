@@ -5,7 +5,7 @@ const createTripInfoElement = (trips) => {
   const firstLocation = trips ? trips[0] : ``;
   const lastLocation = trips ? trips[trips.length - 1] : ``;
 
-  const dates = trips ? `${getFormatDate(firstLocation.startTime)}&nbsp;&mdash;&nbsp;${getFormatDate(lastLocation.startTime)}` : ``;
+  const dates = trips.length ? `${getFormatDate(firstLocation.startTime)}&nbsp;&mdash;&nbsp;${getFormatDate(lastLocation.startTime)}` : ``;
   const uniqueLocations = trips ? [...new Set(trips.map((trip) => trip.destination.name))] : ``;
   let title = ``;
   if (trips) {

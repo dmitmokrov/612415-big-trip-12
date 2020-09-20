@@ -23,8 +23,8 @@ export default class Trip {
     this._eventPresenter = {};
 
     this._sortComponent = null;
+    this._noEventComponent = null;
     this._dayListComponent = new DayListView();
-    this._noEventComponent = new NoEvent();
     this._loadingComponent = new LoadingView();
 
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
@@ -37,16 +37,12 @@ export default class Trip {
   }
 
   init() {
-    if (this._eventsModel.length === 0) {
-      this._renderNoEvent();
-    } else {
-      this._currentSortType = SortType.DEFAULT;
-      this._eventsModel.addObserver(this._modelEventsChangeHandler);
-      this._filterModel.addObserver(this._modelEventsChangeHandler);
+    this._currentSortType = SortType.DEFAULT;
+    this._eventsModel.addObserver(this._modelEventsChangeHandler);
+    this._filterModel.addObserver(this._modelEventsChangeHandler);
 
-      this._renderSort();
-      this._renderEvents();
-    }
+    this._renderSort();
+    this._renderEvents();
   }
 
   destroy() {
@@ -83,11 +79,22 @@ export default class Trip {
       case UpdateType.PATCH:
         this._eventPresenter[update.id].init(update);
         break;
-      // case UpdateType.MINOR:
-      //   this._clearEvents();
-      //   this._renderEvents();
-      //   break;
       case UpdateType.MAJOR:
+        if (this._eventsModel.getEvents().length === 0) {
+          this._clearSort();
+          this._clearEvents();
+
+          if (this._noEventComponent === null) {
+            this._noEventComponent = new NoEvent();
+            this._renderNoEvent();
+          }
+          return;
+        }
+        if (this._noEventComponent !== null) {
+          remove(this._noEventComponent);
+          this._noEventComponent = null;
+        }
+        this._clearSort();
         this._renderSort();
         this._clearEvents();
         this._renderEvents();
@@ -210,5 +217,9 @@ export default class Trip {
 
   _renderLoading() {
     render(this._tripContainer, this._loadingComponent, RenderPosition.BEFOREEND);
+  }
+
+  _renderNoEvent() {
+    render(this._tripContainer, this._noEventComponent, RenderPosition.BEFOREEND);
   }
 }

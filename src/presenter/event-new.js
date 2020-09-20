@@ -24,7 +24,11 @@ export default class EventNew {
     this._eventEditComponent.setFormSubmitHandler(this._formSubmitHandler);
     this._eventEditComponent.setDeleteClickHandler(this._deleteClickHandler);
 
-    render(this._eventList.querySelector(`.trip-sort`), this._eventEditComponent, RenderPosition.AFTER);
+    if (this._eventList.querySelector(`.trip-sort`)) {
+      render(this._eventList.querySelector(`.trip-sort`), this._eventEditComponent, RenderPosition.AFTER);
+    } else {
+      render(this._eventList, this._eventEditComponent, RenderPosition.AFTERBEGIN);
+    }
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
